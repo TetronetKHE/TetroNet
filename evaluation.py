@@ -20,8 +20,8 @@ def train(model, steps, gamma):
                 inpScores[i]=model.predict([[[game.getGameState(lastGame)+inTest]]])
             move = inpScores.index(max(inpScores))
             freq[move]+=1
-            if frames%300==1:
-                print([i/frames for i in freq])
+            if frames%300==5:
+                print(frames/60, [(i-1)/frames for i in freq])
             moves = [i==move for i in range(5)]
             scores += [0]
             after = game.tryUpdate(lastGame,moves)
