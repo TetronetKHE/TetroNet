@@ -297,9 +297,9 @@ class Game:
 
 def getGameState(game):
         result = []
-        result += board.getBoringBoard()
-        result += piece.getBoringPiece()
-        result += nextQueue.getBoringNext()
+        result += game.board.getBoringBoard()
+        result += game.piece.getBoringPiece()
+        result += game.nextQueue.getBoringNext()
         return result
 
 def tryUpdate(game, inputs):
