@@ -10,7 +10,7 @@ from rl.policy import EpsGreedyQPolicy
 from rl.memory import SequentialMemory
 
 model = Sequential()
-model.add(Flatten(input_shape=(1,204)))
+model.add(Flatten(input_shape=(1,211)))
 model.add(Dense(30))
 model.add(Dense(7))
 model.add(Activation('linear'))
