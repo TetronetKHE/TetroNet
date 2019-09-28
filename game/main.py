@@ -27,7 +27,7 @@ class TileMap:
         def draw(self, surface, ox, oy):
                 for y in range(self.height):
                         for x in range(self.width):
-                                self.drawTile(surface, ox, oy, x, y, self.data[y][x])
+                                self.drawTile(surface, ox, oy, x, y, self.data[self.height - y - 1][x])
         
         def drawTile(self, surface, ox, oy, tx, ty, tile):
                 if tile > 0: surface.blit(self.images[tile - 1], (ox + (tx * self.tileSize), oy + (ty * self.tileSize)))
@@ -62,17 +62,12 @@ class Board:
         def tileOnBoard(self, x, y):
                 return x >= 0 and y >= 0 and x < self.tileMap.width and y < self.tileMap.height
         
-        def boardCoordsToTileCoords(self, x, y):
-                return x, self.tileMap.height - y - 1
-
         def getTileAt(self, x, y):
                 if not self.tileOnBoard(x, y): return 1
-                x, y = self.boardCoordsToTileCoords(x, y)
                 return self.tileMap.data[y][x]
 
         def setTileAt(self, x, y, tile):
                 if not self.tileOnBoard(x, y): return
-                x, y = self.boardCoordsToTileCoords(x, y)
                 self.tileMap.data[y][x] = tile
 
         def draw(self, surface):
@@ -156,6 +151,7 @@ class PieceData:
 
 class Piece:
         MaxLockDelay = 4
+        MaxMoveReset = 24
         
         def __init__(self, board, tetromino):
                 self.x = 4
@@ -169,6 +165,8 @@ class Piece:
                 self.lockDelay = Piece.MaxLockDelay
                 
                 self.points = PieceData.getPiecePoints(self.tetromino, self.rotation)
+                
+                self.moveResets = Piece.MaxMoveReset
                 
                 self.down = False
         
@@ -184,7 +182,9 @@ class Piece:
                 if inputs[4]:
                         self.y = self.getYDropCoord()
                 elif self.tryMove(0, -1):
-                        self.lockDelay = Piece.MaxLockDelay
+                        if self.moveResets:
+                                self.lockDelay = Piece.MaxLockDelay
+                                self.moveResets -= 1
                 else:
                         if self.lockDelay:
                                 self.lockDelay -= 1
@@ -193,12 +193,11 @@ class Piece:
         
         def draw(self, surface):
                 for i in range(len(self.points)):
-                        tx, ty = self.board.boardCoordsToTileCoords(self.x + self.points[i][0], self.y + self.points[i][1])
-                        self.board.tileMap.drawTile(surface, 0, 0, tx, ty, self.tetromino)
+                        self.board.tileMap.drawTile(surface, 0, 0, self.x + self.points[i][0], self.board.tileMap.height - self.y - self.points[i][1] - 1, self.tetromino)
         
         def fitAbsolute(self, x, y): # Check if piece fits at that exact position.
                 for i in range(len(self.points)):
-                        if self.board.getTileAt(x, y): return False
+                        if self.board.getTileAt(x + self.points[i][0], y + self.points[i][1]): return False
                 return True
         
         def fit(self, x, y): # Check if piece fits at that position relative to the piece.
@@ -283,8 +282,12 @@ class Game:
                 self.board = Board()
                 self.nextQueue = NextQueue()
                 self.piece = Piece(self.board, self.nextQueue.getPiece())
+                
+                self.gameOver = False
         
         def update(self, inputs):
+                if self.gameOver: return
+                
                 self.piece.update(inputs)
                 if self.piece.down: self.piece = Piece(self.board, self.nextQueue.getPiece())
                 if not self.piece.fit(0, 0): self.gameOver = True
@@ -306,7 +309,7 @@ def tryUpdate(game, inputs):
         tmpGame.update(inputs)
         return tmpGame, tmpGame.linesCleared, tmpGame.gameOver
 
-human_mode = False
+human_mode = True
 
 # Start pygame.
 pygame.init()
@@ -317,6 +320,8 @@ size = (width, height)
 
 # Get the screen surface, which is a thing we can use to draw stuff.
 screen = pygame.display.set_mode(size)
+
+frame = 0
 
 if human_mode:
         game = Game()
@@ -339,8 +344,9 @@ if human_mode:
                                 if event.key == pygame.K_x: inputs[3] = False
                                 if event.key == pygame.K_UP: inputs[4] = False
                 
-                game.update(inputs)
+                if frame % 60 == 0: game.update(inputs)
                 
                 screen.fill((0, 100, 0))
                 game.draw(screen)
                 pygame.display.flip()
+                frame += 1
