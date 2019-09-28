@@ -25,7 +25,7 @@ def train(model, steps, gamma, show=False):
             if frames%300==5:
                 print(frames/60, [i/frames for i in freq])
             moves = [i==move for i in range(5)]
-            if random.random()>.9:
+            if random.random()>.4:
                 r = random.randint(0,4)
                 moves = [i==r for i in range(5)]
             scores += [0]

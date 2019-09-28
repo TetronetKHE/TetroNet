@@ -7,7 +7,7 @@ from keras.optimizers import Adam
 
 model = Sequential()
 model.add(Flatten(input_shape=(1,212)))
-model.add(Dense(30))
+model.add(Dense(120))
 model.add(Dense(1))
 model.add(Activation('linear'))
 model.compile('adam','mean_squared_error')
