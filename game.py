@@ -151,8 +151,7 @@ class PieceData:
 
 class Piece:
         MaxLockDelay = 4
-        MaxMoveReset = 24
-        MaxSpins = 64
+        MaxMoveReset = 8
         
         def __init__(self, board, tetromino):
                 self.x = 4
@@ -168,7 +167,6 @@ class Piece:
                 self.points = PieceData.getPiecePoints(self.tetromino, self.rotation)
                 
                 self.moveResets = Piece.MaxMoveReset
-                self.spinsLeft = Piece.MaxSpins
                 
                 self.down = False
         
@@ -176,10 +174,13 @@ class Piece:
                 if inputs[0]: self.tryMove(-1, 0)
                 if inputs[1]: self.tryMove(1, 0)
                 
-                if inputs[2] and self.spinsLeft:
+                if (not self.moveResets) and (not self.lockDelay) and (not self.fit(0, -1)):
+                        self.placeDown()
+                
+                if inputs[2]:
                         self.tryRotation(False)
                         self.spinsLeft -= 1
-                if inputs[3] and self.spinsLeft:
+                if inputs[3]:
                         self.tryRotation(True)
                         self.spinsLeft -= 1
                 
@@ -198,7 +199,7 @@ class Piece:
         
         def draw(self, surface):
                 for i in range(len(self.points)):
-                        self.board.tileMap.drawTile(surface, 0, 0, self.x + self.points[i][0], self.board.tileMap.height - self.y - self.points[i][1] - 1, self.tetromino)
+                        self.board.tileMap.drawTile(surface, 0, 0, self.x + self.points[i][0], self.board.tileMap.height - self.y - self.points[i][1] - 1, self.tetromino + 1)
         
         def fitAbsolute(self, x, y): # Check if piece fits at that exact position.
                 for i in range(len(self.points)):
@@ -238,7 +239,7 @@ class Piece:
         
         def placeDown(self):
                 for i in range(len(self.points)):
-                        self.board.setTileAt(self.x + self.points[i][0], self.y + self.points[i][1], self.tetromino)
+                        self.board.setTileAt(self.x + self.points[i][0], self.y + self.points[i][1], self.tetromino + 1)
                 self.down = True
         
         def getYDropCoord(self):
