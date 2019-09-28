@@ -168,6 +168,7 @@ class Piece:
                 self.points = PieceData.getPiecePoints(self.tetromino, self.rotation)
                 
                 self.moveResets = Piece.MaxMoveReset
+                self.spinsLeft = Piece.MaxSpins
                 
                 self.down = False
         
@@ -178,12 +179,12 @@ class Piece:
                 if (not self.moveResets) and (not self.lockDelay) and (not self.fit(0, -1)):
                         self.placeDown()
                 
-                if inputs[2] and self.maxSpins:
+                if inputs[2] and self.spinsLeft:
                         self.tryRotation(False)
-                        self.maxSpins -= 1
-                if inputs[3] and self.maxSpins:
+                        self.spinsLeft -= 1
+                if inputs[3] and self.spinsLeft:
                         self.tryRotation(True)
-                        self.maxSpins -= 1
+                        self.spinsLeft -= 1
                 
                 if inputs[4]:
                         self.y = self.getYDropCoord()
