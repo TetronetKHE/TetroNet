@@ -15,7 +15,8 @@ def train(model, steps, gamma):
             for i in range(5):
                 inTest = [j==i for j in range(5)]
                 inpScores[i]=model.predict([[[game.getGameState(lastGame)+inTest]]])
-            moves = inpScores.index(max(inpScores))
+            move = inpScores.index(max(inpScores))
+            moves = [i==move for i in range(5)]
             after = game.tryUpdate(lastGame,moves)
             games += [[game.getGameState(lastGame),moves]]
             lastGame=after[0]
