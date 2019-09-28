@@ -269,7 +269,7 @@ class NextQueue:
                 self.queue = [self.bag.getPiece() for i in range(NextQueue.MaxNext)]
         
         def getPiece(self):
-                if not len(self.queue): self.getNewQueue()
+                self.queue.push(self.bag.getPiece())
                 return self.queue.pop(0)
         
         def getBoringNext(self):
