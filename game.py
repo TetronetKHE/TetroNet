@@ -154,14 +154,14 @@ class Piece:
         MaxMoveReset = 8
         MaxSpins = 4
         
-        def __init__(self, board, tetromino, rotation):
+        def __init__(self, board, tetromino):
                 self.x = 4
                 self.y = 18
                 
                 self.board = board
                 
                 self.tetromino = tetromino
-                self.rotation = rotation
+                self.rotation = 0
                 
                 self.lockDelay = Piece.MaxLockDelay
                 
@@ -300,7 +300,7 @@ class Game:
         def __init__(self):
                 self.board = Board()
                 self.nextQueue = NextQueue()
-                self.piece = Piece(self.board, self.nextQueue.getPiece(), 0)
+                self.piece = Piece(self.board, self.nextQueue.getPiece())
                 
                 self.rotation = 0
                 
@@ -312,9 +312,8 @@ class Game:
                 
                 self.piece.update(inputs)
                 if self.piece.down:
-                        self.highestTile = self.piece.y
-                        self.rotation = (self.rotation + 1) % 4
-                        self.piece = Piece(self.board, self.nextQueue.getPiece(), self.rotation)
+                        if self.piece.y > self.highestTile: self.highestTile = self.piece.y
+                        self.piece = Piece(self.board, self.nextQueue.getPiece())
                 if not self.piece.fit(0, 0): self.gameOver = True
                 self.linesCleared = self.board.update()
                 if self.linesCleared:
