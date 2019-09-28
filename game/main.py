@@ -3,8 +3,6 @@ import numpy as np
 import random
 import copy
 
-import tilemap, board, piecedata
-
 Tetrominos = {
         "I" : 0,
         "J" : 1,
@@ -34,16 +32,38 @@ class TileMap:
         def drawTile(self, surface, ox, oy, tx, ty, tile):
                 if tile > 0: surface.blit(self.images[tile - 1], (ox + (tx * self.tileSize), oy + (ty * self.tileSize)))
 
-
 class Board:
         def __init__(self):
                 self.tileMap = TileMap(10, 20, [pygame.image.load(f"resources\\{x}.png") for x in range(1, 8)], 24)
         
+        def update(self):
+                r = 0
+                for y in range(self.tileMap.height - 1, -1, -1):
+                        if self.lineFull(y):
+                                self.clearLine(y)
+                                r += 1
+                return r
+        
+        def lineFull(self, y):
+                for x in range(self.tileMap.width):
+                        if not self.tileMap.data[y][x]: return False
+                return True
+        
+        def lineEmpty(self, y):
+                for x in range(self.tileMap.width):
+                        if self.tileMap.data[y][x]: return False
+                return True
+        
+        def clearLine(self, y):
+                for line in range(y, self.tileMap.height - 1):
+                        self.tileMap.data[line] = self.tileMap.data[line + 1]
+                self.tileMap.data[self.tileMap.height - 1] = [0 for x in range(self.tileMap.width)]
+        
         def tileOnBoard(self, x, y):
                 return x >= 0 and y >= 0 and x < self.tileMap.width and y < self.tileMap.height
-
+        
         def boardCoordsToTileCoords(self, x, y):
-                return [x, self.tileMap.height - y - 1]
+                return x, self.tileMap.height - y - 1
 
         def getTileAt(self, x, y):
                 if not self.tileOnBoard(x, y): return 1
@@ -63,32 +83,32 @@ class Board:
 
 class PieceData:
         TetrominoTable = [
-                [ (-1, 0), ( 0, 0), ( 1, 0), ( 2, 0) ], # I
-                [ (-1, 1), (-1, 0), ( 0, 0), ( 1, 0) ], # J
-                [ ( 1, 1), (-1, 0), ( 0, 0), ( 1, 0) ], # L
-                [ ( 0, 1), ( 1, 1), ( 0, 0), ( 1, 0) ], # O
-                [ ( 0, 1), ( 1, 1), (-1, 0), ( 0, 0) ], # S
-                [ ( 0, 1), (-1, 0), ( 0, 0), ( 1, 0) ], # T
-                [ (-1, 1), ( 0, 1), ( 0, 0), ( 1, 0) ], # Z
+                [ [-1, 0], [ 0, 0], [ 1, 0], [ 2, 0] ], # I
+                [ [-1, 1], [-1, 0], [ 0, 0], [ 1, 0] ], # J
+                [ [ 1, 1], [-1, 0], [ 0, 0], [ 1, 0] ], # L
+                [ [ 0, 1], [ 1, 1], [ 0, 0], [ 1, 0] ], # O
+                [ [ 0, 1], [ 1, 1], [-1, 0], [ 0, 0] ], # S
+                [ [ 0, 1], [-1, 0], [ 0, 0], [ 1, 0] ], # T
+                [ [-1, 1], [ 0, 1], [ 0, 0], [ 1, 0] ], # Z
         ]
         RotationTable = {
                 "I": [
-                        [ ( 0, 0), (-1, 0), ( 2, 0), (-1, 0), ( 2, 0) ],
-                        [ (-1, 0), ( 0, 0), ( 0, 0), ( 0, 1), ( 0,-2) ],
-                        [ (-1, 1), ( 1, 1), (-2, 1), ( 1, 0), (-2, 0) ],
-                        [ ( 0, 1), ( 0, 1), ( 0, 1), ( 0,-1), ( 0, 2) ]
+                        [ [ 0, 0], [-1, 0], [ 2, 0], [-1, 0], [ 2, 0] ],
+                        [ [-1, 0], [ 0, 0], [ 0, 0], [ 0, 1], [ 0,-2] ],
+                        [ [-1, 1], [ 1, 1], [-2, 1], [ 1, 0], [-2, 0] ],
+                        [ [ 0, 1], [ 0, 1], [ 0, 1], [ 0,-1], [ 0, 2] ]
                 ],
                 "O": [
-                        [ ( 0, 0) ],
-                        [ ( 0,-1) ],
-                        [ (-1,-1) ],
-                        [ (-1, 0) ]
+                        [ [ 0, 0] ],
+                        [ [ 0,-1] ],
+                        [ [-1,-1] ],
+                        [ [-1, 0] ]
                 ],
                 "Other": [
-                        [ ( 0, 0), ( 0, 0), ( 0, 0), ( 0, 0), ( 0, 0) ],
-                        [ ( 0, 0), ( 1, 0), ( 1,-1), ( 0, 2), ( 1, 2) ],
-                        [ ( 0, 0), ( 0, 0), ( 0, 0), ( 0, 0), ( 0, 0) ],
-                        [ ( 0, 0), (-1, 0), (-1,-1), ( 0, 2), (-1, 2) ]
+                        [ [ 0, 0], [ 0, 0], [ 0, 0], [ 0, 0], [ 0, 0] ],
+                        [ [ 0, 0], [ 1, 0], [ 1,-1], [ 0, 2], [ 1, 2] ],
+                        [ [ 0, 0], [ 0, 0], [ 0, 0], [ 0, 0], [ 0, 0] ],
+                        [ [ 0, 0], [-1, 0], [-1,-1], [ 0, 2], [-1, 2] ]
                 ]
         }
         
@@ -96,11 +116,11 @@ class PieceData:
                 if r == 0:
                         return p
                 elif r == 1:
-                        return (p[1], -p[0])
+                        return [p[1], -p[0]]
                 elif r == 2:
-                        return (-p[0], -p[1])
+                        return [-p[0], -p[1]]
                 elif r == 3:
-                        return (-p[1], p[0])
+                        return [-p[1], p[0]]
 
         def getPiecePoints(tetromino, rotation):
                 result = PieceData.TetrominoTable[tetromino].copy()
@@ -112,24 +132,24 @@ class PieceData:
         
         def getOffsetTableLength(tetromino, rotation):
                 if tetromino == Tetrominos["I"]:
-                        return len(PieceData.RotationTable["I"])
+                        return len(PieceData.RotationTable["I"][rotation])
                 elif tetromino == Tetrominos["O"]:
-                        return len(PieceData.RotationTable["O"])
+                        return len(PieceData.RotationTable["O"][rotation])
                 else:
-                        return len(PieceData.RotationTable["Other"])
+                        return len(PieceData.RotationTable["Other"][rotation])
         
         def getOffsetPoint(tetromino, rotation, check):
                 if tetromino == Tetrominos["I"]:
-                        result = PieceData.RotationTable["I"][check].copy()
+                        result = PieceData.RotationTable["I"][rotation][check].copy()
                 elif tetromino == Tetrominos["O"]:
-                        result = PieceData.RotationTable["O"][check].copy()
+                        result = PieceData.RotationTable["O"][rotation][check].copy()
                 else:
-                        result = PieceData.RotationTable["Other"][check].copy()
+                        result = PieceData.RotationTable["Other"][rotation][check].copy()
                 
                 return result
         
         def getOffset(tetromino, prevRot, rotation, check):
-                prevOffset = PieceData.getOffsetPoint(tetromino, rotation, check)
+                prevOffset = PieceData.getOffsetPoint(tetromino, prevRot, check)
                 nextOffset = PieceData.getOffsetPoint(tetromino, rotation, check)
                 
                 return (prevOffset[0] - nextOffset[0], prevOffset[1] - nextOffset[1])
@@ -139,7 +159,7 @@ class Piece:
         
         def __init__(self, board, tetromino):
                 self.x = 4
-                self.y = 20
+                self.y = 18
                 
                 self.board = board
                 
@@ -149,8 +169,12 @@ class Piece:
                 self.lockDelay = Piece.MaxLockDelay
                 
                 self.points = PieceData.getPiecePoints(self.tetromino, self.rotation)
+                
+                self.down = False
         
         def update(self, inputs):
+                print((self.x, self.y))
+                
                 if inputs[0]: self.tryMove(-1, 0)
                 if inputs[1]: self.tryMove(1, 0)
                 
@@ -159,7 +183,7 @@ class Piece:
                 
                 if inputs[4]:
                         self.y = self.getYDropCoord()
-                elif tryMove(0, -1):
+                elif self.tryMove(0, -1):
                         self.lockDelay = Piece.MaxLockDelay
                 else:
                         if self.lockDelay:
@@ -168,19 +192,20 @@ class Piece:
                                 self.placeDown()
         
         def draw(self, surface):
-                for i in range(len(points)):
-                        self.board.drawTile(surface, 0, 0, self.x + self.points[i][0], self.x + self.points[i][1], self.tetromino)
+                for i in range(len(self.points)):
+                        tx, ty = self.board.boardCoordsToTileCoords(self.x + self.points[i][0], self.y + self.points[i][1])
+                        self.board.tileMap.drawTile(surface, 0, 0, tx, ty, self.tetromino)
         
         def fitAbsolute(self, x, y): # Check if piece fits at that exact position.
-                for i in range(len(points)):
-                        if not self.board.getTileAt(x, y): return False
+                for i in range(len(self.points)):
+                        if self.board.getTileAt(x, y): return False
                 return True
         
         def fit(self, x, y): # Check if piece fits at that position relative to the piece.
                 return self.fitAbsolute(self.x + x, self.y + y)
         
         def tryMove(self, x, y):
-                if fit(self, x, y):
+                if self.fit(x, y):
                         self.x += x
                         self.y += y
                         return True
@@ -206,6 +231,11 @@ class Piece:
                 self.points = PieceData.getPiecePoints(self.tetromino, self.rotation)
                 
                 return False
+        
+        def placeDown(self):
+                for i in range(len(self.points)):
+                        self.board.setTileAt(self.x + self.points[i][0], self.y + self.points[i][1], self.tetromino)
+                self.down = True
         
         def getYDropCoord(self):
                 tmpY = self.y
@@ -234,8 +264,8 @@ class Bag:
 class NextQueue:
         MaxNext = 3
         
-        def __init__(self, bag):
-                self.bag = bag
+        def __init__(self):
+                self.bag = Bag()
                 self.getNewQueue()
         
         def getNewQueue(self):
@@ -251,22 +281,32 @@ class NextQueue:
 class Game:
         def __init__(self):
                 self.board = Board()
-                self.bag = Bag()
-                self.nextQueue = NextQueue(self.bag)
+                self.nextQueue = NextQueue()
                 self.piece = Piece(self.board, self.nextQueue.getPiece())
         
         def update(self, inputs):
-                self.piece.update()
-                if self.piece.down: self.piece = Piece(board, nextQueue.getPiece())
+                self.piece.update(inputs)
+                if self.piece.down: self.piece = Piece(self.board, self.nextQueue.getPiece())
+                if not self.piece.fit(0, 0): self.gameOver = True
+                self.linesCleared = self.board.update()
         
-        def tryUpdate(self, inputs):
-                tmpBoard = Board()
-                tmpBoard.tileMap.data = [row.copy() for row in self.board.tileMap.data]
-                tmpBag = Bag()
-                tmpBag.bag = self.bag.bag.copy()
-                tmpNextQueue = NextQueue(tmpBag)
-                #TODO
-                
+        def draw(self, surface):
+                self.board.draw(surface)
+                self.piece.draw(surface)
+
+def getGameState(game):
+        result = []
+        result += board.getBoringBoard()
+        result += piece.getBoringPiece()
+        result += nextQueue.getBoringNext()
+        return result
+
+def tryUpdate(game, inputs):
+        tmpGame = copy.deepcopy(game)
+        tmpGame.update(inputs)
+        return tmpGame, tmpGame.linesCleared, tmpGame.gameOver
+
+human_mode = False
 
 # Start pygame.
 pygame.init()
@@ -278,35 +318,29 @@ size = (width, height)
 # Get the screen surface, which is a thing we can use to draw stuff.
 screen = pygame.display.set_mode(size)
 
-# NOTE: This is using screen coordinates.  Y is down internally, but my wrapper functions for the board will automatically convert the coordinates into board coordinates.
-def getANewGame():
-        board = Board()
-        bag = Bag()
-        nextQueue = NextQueue(bag)
-        piece = Piece(board, nextQueue.getPiece())
+if human_mode:
+        game = Game()
+        inputs = [0, 0, 0, 0, 0]
         
-        return board, bag, nextQueue, piece
-
-def getGameState(game):
-        result = []
-        result += board.getBoringBoard()
-        result += piece.getBoringPiece()
-        result += nextQueue.getBoringNext()
-        return result
-
-def tryUpdate():
-        
-        
-
-board, bag, nextQueue, piece = getANewGame()
-
-while True:
-        for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                        sys.exit()
-        
-        
-        screen.fill((0, 0, 0))
-        board.draw(screen)
-        piece.draw(screen)
-        pygame.display.flip()
+        while True:
+                for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                                sys.exit()
+                        if event.type == pygame.KEYDOWN:
+                                if event.key == pygame.K_LEFT: inputs[0] = True
+                                if event.key == pygame.K_RIGHT: inputs[1] = True
+                                if event.key == pygame.K_z: inputs[2] = True
+                                if event.key == pygame.K_x: inputs[3] = True
+                                if event.key == pygame.K_UP: inputs[4] = True
+                        if event.type == pygame.KEYUP:
+                                if event.key == pygame.K_LEFT: inputs[0] = False
+                                if event.key == pygame.K_RIGHT: inputs[1] = False
+                                if event.key == pygame.K_z: inputs[2] = False
+                                if event.key == pygame.K_x: inputs[3] = False
+                                if event.key == pygame.K_UP: inputs[4] = False
+                
+                game.update(inputs)
+                
+                screen.fill((0, 100, 0))
+                game.draw(screen)
+                pygame.display.flip()
