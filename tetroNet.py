@@ -16,6 +16,6 @@ model.add(Dense(1))
 model.add(Activation('linear'))
 print(model.summary())
 
-for i in range(500):
+for i in range(2000):
     train(model,5,.99)
     model.save("tetroNetBackup")
