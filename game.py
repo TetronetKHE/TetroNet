@@ -13,15 +13,15 @@ Tetrominos = {
         "Z" : 6,
         "Length": 7
 }
+Tiles = [pygame.image.load(os.path.dirname(os.path.abspath("resources/1.png"))+f"\\{x}.png") for x in range(1, 8)]
 
 class TileMap:
-        def __init__(self, width, height, images, tileSize):
+        def __init__(self, width, height, tileSize):
                 self.width = width
                 self.height = height
-
-                self.images = images
+                
                 self.tileSize = tileSize
-
+                
                 self.data = [[0 for x in range(self.width)] for y in range(self.height)]
 
         def draw(self, surface, ox, oy):
@@ -30,11 +30,11 @@ class TileMap:
                                 self.drawTile(surface, ox, oy, x, y, self.data[self.height - y - 1][x])
         
         def drawTile(self, surface, ox, oy, tx, ty, tile):
-                if tile > 0: surface.blit(self.images[tile - 1], (ox + (tx * self.tileSize), oy + (ty * self.tileSize)))
+                if tile > 0: surface.blit(Tiles[tile - 1], (ox + (tx * self.tileSize), oy + (ty * self.tileSize)))
 
 class Board:
         def __init__(self):
-                self.tileMap = TileMap(10, 20, [pygame.image.load(os.path.dirname(os.path.abspath("resources/1.png"))+f"\\{x}.png") for x in range(1, 8)], 24)
+                self.tileMap = TileMap(10, 20, 24)
         
         def update(self):
                 r = 0
@@ -312,7 +312,7 @@ def drawGame(game):
         game.draw(screen)
         pygame.display.flip()
 
-human_mode = False
+human_mode = True
 
 # Start pygame.
 pygame.init()
