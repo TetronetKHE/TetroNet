@@ -19,6 +19,14 @@ class gameState:
         new = gameState(mat,self.piece,self.rotation,[self.pos[0],self.pos[1]])
         new #change necessary things
         return [new,rows, lose] #rows is number of rows deleted, lose is 1 if you lost
+    def toList(self):
+        a=[]
+        for i in self.static:
+            a+=i
+        a+=[self.piece]
+        a+=[self.rotation]
+        a+=self.pos
+        return a
 
 np.random.seed(1984)
 
