@@ -1,5 +1,5 @@
 import numpy as np
-#import game
+import train from evaluation.py
 
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Flatten
@@ -12,6 +12,10 @@ from rl.memory import SequentialMemory
 model = Sequential()
 model.add(Flatten(input_shape=(1,211)))
 model.add(Dense(30))
-model.add(Dense(7))
+model.add(Dense(1))
 model.add(Activation('linear'))
 print(model.summary())
+
+for i in range(500):
+    train(model,5,.99)
+    model.save("tetroNetBackup")
