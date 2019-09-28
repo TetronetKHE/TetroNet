@@ -299,15 +299,21 @@ class Game:
                 self.nextQueue = NextQueue()
                 self.piece = Piece(self.board, self.nextQueue.getPiece())
                 
+                self.highestTile = 0
                 self.gameOver = False
         
         def update(self, inputs):
                 if self.gameOver: return
                 
                 self.piece.update(inputs)
-                if self.piece.down: self.piece = Piece(self.board, self.nextQueue.getPiece())
+                if self.piece.down:
+                        self.highestTile = self.piece.y
+                        self.piece = Piece(self.board, self.nextQueue.getPiece())
                 if not self.piece.fit(0, 0): self.gameOver = True
                 self.linesCleared = self.board.update()
+                if self.linesCleared:
+                        self.highestTile -= self.linesCleared
+                        if self.highestTile < 0: self.highestTile = 0
         
         def draw(self, surface):
                 self.board.draw(surface)
@@ -323,14 +329,14 @@ def getGameState(game):
 def tryUpdate(game, inputs):
         tmpGame = copy.deepcopy(game)
         tmpGame.update(inputs)
-        return tmpGame, tmpGame.linesCleared, tmpGame.gameOver
+        return tmpGame, tmpGame.linesCleared, tmpGame.gameOver, tmpGame.highestTile
 
 def drawGame(game):
         screen.fill((0, 100, 0))
         game.draw(screen)
         pygame.display.flip()
 
-human_mode = False
+human_mode = True
 
 # Start pygame.
 pygame.init()
@@ -366,7 +372,7 @@ if human_mode:
                                 if event.key == pygame.K_UP: inputs[4] = False
                 
                 if frame % 60 == 0: game.update(inputs)
-                # if frame % 60*8 == 0: print(game.board.getBoringBoard())
+                if frame % 60*8 == 0: print(game.highestTile)
                 
                 drawGame(game)
                 frame += 1
