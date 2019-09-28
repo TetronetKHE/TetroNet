@@ -1,14 +1,15 @@
 import numpy as np
 import game
+import random
 
-np.random.seed(1984)
+random.seed(1984)
 
-def train(model, steps, gamma):
+def train(model, steps, gamma, show=False):
+    games=[]
+    scores=[]
     for asdfghjkl in range(steps):
         print("step " + str(asdfghjkl))
-        games = []
         lastGame=game.Game()
-        scores = []
         lost=False
         after = [0,0,0]
         freq = [0,0,0,0,0]
@@ -20,14 +21,17 @@ def train(model, steps, gamma):
                 inpScores[i]=model.predict([[[game.getGameState(lastGame)+inTest]]])
             move = inpScores.index(max(inpScores))
             freq[move]+=1
+            frames+=1
             if frames%300==5:
-                print(frames/60, [(i-1)/frames for i in freq])
+                print(frames/60, [i/frames for i in freq])
             moves = [i==move for i in range(5)]
+            if random.random()>.9:
+                r = random.randint(0,4)
+                moves = [i==r for i in range(5)]
             scores += [0]
             after = game.tryUpdate(lastGame,moves)
             games += [[game.getGameState(lastGame),moves]]
             lastGame=after[0]
-            frames+=1
             if after[1] or after[2]:
                 pt = after[1] - 20*after[2]
                 for i in range(len(scores)):
@@ -36,3 +40,16 @@ def train(model, steps, gamma):
                 lost=True
         print(sum(scores)/len(scores))
         model.fit([[[games[i][0]+games[i][1]] for i in range(len(games))]],[[[i] for i in scores]], epochs=50)
+        lost=False
+        ggame = game.Game()
+        while not lost:
+            inpScores=[0,0,0,0,0]
+            game.drawGame(ggame)
+            for i in range(5):
+                inTest = [j==i for j in range(5)]
+                inpScores[i]=model.predict([[[game.getGameState(ggame)+inTest]]])
+            move = inpScores.index(max(inpScores))
+            moves = [i==move for i in range(5)]
+            after = game.tryUpdate(ggame, moves)
+            ggame=after[0]
+            lost = after[2]
