@@ -1,6 +1,5 @@
 import numpy as np
 import game
-from game import main
 
 np.random.seed(1984)
 
