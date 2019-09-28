@@ -290,7 +290,7 @@ class NextQueue:
                 return self.queue.copy()
         
         def getBoringNext2(self):
-                tmpPts = getPiecePoints(self.queue[0], 0)
+                tmpPts = PieceData.getPiecePoints(self.queue[0], 0)
                 return [tmpPts[pt][d] for d in range(2) for pt in range(len(tmpPts))]
 
 class Game:
