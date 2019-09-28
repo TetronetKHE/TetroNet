@@ -152,16 +152,16 @@ class PieceData:
 class Piece:
         MaxLockDelay = 4
         MaxMoveReset = 8
-        MaxSpins = 16
+        MaxSpins = 4
         
-        def __init__(self, board, tetromino):
+        def __init__(self, board, tetromino, rotation):
                 self.x = 4
                 self.y = 18
                 
                 self.board = board
                 
                 self.tetromino = tetromino
-                self.rotation = 0
+                self.rotation = rotation
                 
                 self.lockDelay = Piece.MaxLockDelay
                 
@@ -178,6 +178,7 @@ class Piece:
                 
                 if (not self.moveResets) and (not self.lockDelay) and (not self.fit(0, -1)):
                         self.placeDown()
+                        return
                 
                 if inputs[2] and self.spinsLeft:
                         self.tryRotation(False)
@@ -189,6 +190,7 @@ class Piece:
                 if inputs[4]:
                         self.y = self.getYDropCoord()
                         self.placeDown()
+                        return
                 elif self.tryMove(0, -1):
                         if self.moveResets:
                                 self.lockDelay = Piece.MaxLockDelay
@@ -198,6 +200,7 @@ class Piece:
                                 self.lockDelay -= 1
                         else:
                                 self.placeDown()
+                                return
         
         def draw(self, surface):
                 for i in range(len(self.points)):
@@ -297,7 +300,9 @@ class Game:
         def __init__(self):
                 self.board = Board()
                 self.nextQueue = NextQueue()
-                self.piece = Piece(self.board, self.nextQueue.getPiece())
+                self.piece = Piece(self.board, self.nextQueue.getPiece(), 0)
+                
+                self.rotation = 0
                 
                 self.highestTile = 0
                 self.gameOver = False
@@ -308,7 +313,8 @@ class Game:
                 self.piece.update(inputs)
                 if self.piece.down:
                         self.highestTile = self.piece.y
-                        self.piece = Piece(self.board, self.nextQueue.getPiece())
+                        self.rotation = (self.rotation + 1) % 4
+                        self.piece = Piece(self.board, self.nextQueue.getPiece(), self.rotation)
                 if not self.piece.fit(0, 0): self.gameOver = True
                 self.linesCleared = self.board.update()
                 if self.linesCleared:
@@ -332,11 +338,11 @@ def tryUpdate(game, inputs):
         return tmpGame, tmpGame.linesCleared, tmpGame.gameOver, tmpGame.highestTile
 
 def drawGame(game):
-        screen.fill((0, 100, 0))
+        screen.fill((0, 0, 0))
         game.draw(screen)
         pygame.display.flip()
 
-human_mode = False
+human_mode = True
 
 # Start pygame.
 pygame.init()
@@ -372,7 +378,7 @@ if human_mode:
                                 if event.key == pygame.K_UP: inputs[4] = False
                 
                 if frame % 60 == 0: game.update(inputs)
-                if frame % 60*8 == 0: print(game.highestTile)
+                if frame % 60*8 == 0: print(game.piece.getBoringPiece2())
                 
                 drawGame(game)
                 frame += 1
