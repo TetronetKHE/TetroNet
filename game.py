@@ -287,6 +287,9 @@ class NextQueue:
                 return self.queue.pop(0)
         
         def getBoringNext(self):
+                return self.queue.copy()
+        
+        def getBoringNext2(self):
                 tmpPts = getPiecePoints(self.queue[0], 0)
                 return [tmpPts[pt][d] for d in range(2) for pt in range(len(tmpPts))]
 
