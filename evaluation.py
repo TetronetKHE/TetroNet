@@ -22,10 +22,10 @@ def train(model, steps, gamma, show=False):
             move = inpScores.index(max(inpScores))
             freq[move]+=1
             frames+=1
-            if frames%300==5:
+            if frames%300==30:
                 print(frames/60, [i/frames for i in freq])
             moves = [i==move for i in range(5)]
-            if random.random()>.4:
+            if random.random()>.6:
                 r = random.randint(0,4)
                 moves = [i==r for i in range(5)]
             scores += [0]
@@ -33,7 +33,7 @@ def train(model, steps, gamma, show=False):
             games += [[game.getGameState(lastGame),moves]]
             lastGame=after[0]
             if after[1] or after[2]:
-                pt = after[1] - 20*after[2]
+                pt = 10+5*after[1] - 100*after[2]-after[3]
                 for i in range(len(scores)):
                     scores[-1-i] += pt*gamma**i
             if after[2]:
