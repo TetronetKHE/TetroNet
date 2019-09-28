@@ -342,7 +342,7 @@ def drawGame(game):
         game.draw(screen)
         pygame.display.flip()
 
-human_mode = True
+human_mode = False
 
 # Start pygame.
 pygame.init()
