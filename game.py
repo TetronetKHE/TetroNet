@@ -255,6 +255,10 @@ class Piece:
         
         def getBoringPiece(self):
                 return [self.tetromino, self.rotation, self.x, self.y]
+        
+        def getBoringPiece2(self):
+                p = [self.x, self.y]
+                return [p[d]+self.points[pt][d] for d in range(2) for pt in range(len(self.points))]
 
 class Bag:
         def __init__(self):
@@ -283,7 +287,8 @@ class NextQueue:
                 return self.queue.pop(0)
         
         def getBoringNext(self):
-                return self.queue.copy()
+                tmpPts = getPiecePoints(self.queue[0], 0)
+                return [tmpPts[pt][d] for d in range(2) for pt in range(len(tmpPts))]
 
 class Game:
         def __init__(self):
@@ -308,8 +313,8 @@ class Game:
 def getGameState(game):
         result = []
         result += game.board.getBoringBoard()
-        result += game.piece.getBoringPiece()
-        result += game.nextQueue.getBoringNext()
+        result += game.piece.getBoringPiece2()
+        result += game.nextQueue.getBoringNext2()
         return result
 
 def tryUpdate(game, inputs):
