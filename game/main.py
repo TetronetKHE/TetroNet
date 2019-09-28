@@ -79,7 +79,7 @@ class PieceData:
 			return (-p[1], p[0])
 	
 	def getPiece(tetromino, rotation):
-		#TODO: this function will return the piece as an array of tuples representing points.
+		s=0#TODO: this function will return the piece as an array of tuples representing points.
 
 class Piece:
 	x = 0

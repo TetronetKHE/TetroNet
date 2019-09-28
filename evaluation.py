@@ -1,11 +1,7 @@
 import numpy as np
 
 def copyMat(a):
-    n=[0]*len(a)
-    for i in range(len(a)):
-        n[i]=[0]*len(a[i])
-        for j in range(len(a[i])):
-            n[i][j] = a[i][j]
+    n=[[j for j in i] for i in a]
     return n
 
 class gameState:
@@ -41,6 +37,3 @@ def train(model, steps, gamma):
         after = [0,0]
         while not lost:
             after = games[-1]*
-
-
-
