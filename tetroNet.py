@@ -13,5 +13,5 @@ model.add(Activation('linear'))
 print(model.summary())
 
 for i in range(2000):
-    train(model,5,.99)
+    train(model,5,.85)
     model.save("tetroNetBackup")
