@@ -38,8 +38,8 @@ def train(model, steps, gamma, show=False):
                     scores[-1-i] += pt*gamma**i
             if after[2]:
                 lost=True
-        print(sum(scores)/len(scores))
-        model.fit([[[games[i][0]+games[i][1]] for i in range(len(games))]],[[[i] for i in scores]], epochs=50)
+        print(sum(scores)/len(scores), [i/frames for i in freq])
+        model.fit([[[games[i][0]+games[i][1]] for i in range(len(games))]],[[[i] for i in scores]], epochs=250, verbose=0)
         lost=False
         ggame = game.Game()
         while not lost:
