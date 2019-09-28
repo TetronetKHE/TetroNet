@@ -312,7 +312,7 @@ def drawGame(game):
         game.draw(screen)
         pygame.display.flip()
 
-human_mode = True
+human_mode = False
 
 # Start pygame.
 pygame.init()
@@ -348,7 +348,7 @@ if human_mode:
                                 if event.key == pygame.K_UP: inputs[4] = False
                 
                 if frame % 60 == 0: game.update(inputs)
-                if frame % 60*8 == 0: print(game.board.getBoringBoard())
+                # if frame % 60*8 == 0: print(game.board.getBoringBoard())
                 
                 drawGame(game)
                 frame += 1
