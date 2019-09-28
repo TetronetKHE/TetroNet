@@ -24,13 +24,14 @@ class TileMap:
         def draw(self, surface, ox, oy):
                 for y in range(self.height):
                         for x in range(self.width):
-                                if self.data[y][x] > 0:
-                                        surface.blit(self.images[self.data[y][x] - 1], (ox + (x * self.tileSize), oy + (y * self.tileSize)))
+                                self.drawTile(surface, ox, oy, x, y, self.data[y][x])
+        
+        def drawTile(self, surface, ox, oy, tx, ty, tile):
+                if tile > 0: surface.blit(self.images[tile - 1], (ox + (tx * self.tileSize), oy + (ty * self.tileSize)))
 
 
 class Board:
         def __init__(self):
-                print(os.getcwd())
                 self.tileMap = TileMap(10, 20, [pygame.image.load(f"resources\\{x}.png") for x in range(1, 8)], 24)
         
         def tileOnBoard(self, x, y):
@@ -135,11 +136,14 @@ class Piece:
         def update(self, moveLeft, moveRight, rotateLeft, rotateRight, softDrop, hardDrop):
                 pass
         
-        def draw(self):
-                pass
+        def draw(self, surface):
+                for i in range(len(points)):
+                        self.board.drawTile(surface, 0, 0, self.x + self.points[i][0], self.x + self.points[i][1], self.tetromino)
         
         def fitAbsolute(self, x, y): # Check if piece fits at that exact position.
-                pass
+                for i in range(len(points)):
+                        if not self.board.getTileAt(x, y): return False
+                return True
         
         def fit(self, x, y): # Check if piece fits at that position relative to the piece.
                 return self.fitAbsolute(self.x + x, self.y + y)
