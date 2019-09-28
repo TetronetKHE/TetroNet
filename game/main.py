@@ -1,5 +1,15 @@
 import sys, pygame, os
-import numpy as np
+# import numpy as np
+
+Tetrominos = {
+        "I" : 0,
+        "J" : 1,
+        "L" : 2,
+        "O" : 3,
+        "S" : 4,
+        "T" : 5,
+        "Z" : 6
+}
 
 class TileMap:
         def __init__(self, width, height, images, tileSize):
@@ -21,7 +31,8 @@ class TileMap:
 class Board:
         def __init__(self):
                 print(os.getcwd())
-                self.tileMap = TileMap(10, 20, [pygame.image.load(os.path.dirname(os.path.abspath(f"resources/{x}.png"))+f"\\{x}.png") for x in range(1, 8)], 24)
+                self.tileMap = TileMap(10, 20, [pygame.image.load(f"resources\\{x}.png") for x in range(1, 8)], 24)
+        
         def tileOnBoard(self, x, y):
                 return x >= 0 and y >= 0 and x < self.tileMap.width and y < self.tileMap.height
 
@@ -29,14 +40,12 @@ class Board:
                 return [x, self.tileMap.height - y - 1]
 
         def getTileAt(self, x, y):
-                if not self.tileOnBoard(x, y):
-                        return 1
+                if not self.tileOnBoard(x, y): return 1
                 x, y = self.boardCoordsToTileCoords(x, y)
                 return self.tileMap.data[y][x]
 
         def setTileAt(self, x, y, tile):
-                if not self.tileOnBoard(x, y):
-                        return
+                if not self.tileOnBoard(x, y): return
                 x, y = self.boardCoordsToTileCoords(x, y)
                 self.tileMap.data[y][x] = tile
 
@@ -55,9 +64,28 @@ class PieceData:
                 [ ( 0, 1), ( 1, 1), (-1, 0), ( 0, 0) ], # S
                 [ ( 0, 1), (-1, 0), ( 0, 0), ( 1, 0) ], # T
                 [ (-1, 1), ( 0, 1), ( 0, 0), ( 1, 0) ], # Z
+        ]
+        RotationTable = {
+                "I": [
+                        [ ( 0, 0), (-1, 0), ( 2, 0), (-1, 0), ( 2, 0) ],
+                        [ (-1, 0), ( 0, 0), ( 0, 0), ( 0, 1), ( 0,-2) ],
+                        [ (-1, 1), ( 1, 1), (-2, 1), ( 1, 0), (-2, 0) ],
+                        [ ( 0, 1), ( 0, 1), ( 0, 1), ( 0,-1), ( 0, 2) ]
+                ],
+                "O": [
+                        [ ( 0, 0) ],
+                        [ ( 0,-1) ],
+                        [ (-1,-1) ],
+                        [ (-1, 0) ]
+                ],
+                "Other": [
+                        [ ( 0, 0), ( 0, 0), ( 0, 0), ( 0, 0), ( 0, 0) ],
+                        [ ( 0, 0), ( 1, 0), ( 1,-1), ( 0, 2), ( 1, 2) ],
+                        [ ( 0, 0), ( 0, 0), ( 0, 0), ( 0, 0), ( 0, 0) ],
+                        [ ( 0, 0), (-1, 0), (-1,-1), ( 0, 2), (-1, 2) ]
                 ]
-        RotationTable = []
-
+        }
+        
         def rotatePoint(p, r):
                 if r == 0:
                         return p
@@ -68,17 +96,59 @@ class PieceData:
                 elif r == 3:
                         return (-p[1], p[0])
 
-        def getPiece(tetromino, rotation):
-                s=0#TODO: this function will return the piece as an array of tuples representing points.
+        def getPiecePoints(tetromino, rotation):
+                result = PieceData.TetrominoTable[tetromino].copy()
+                
+                for i in range(len(result)):
+                        result[i] = PieceData.rotatePoint(result[i], rotation)
+                
+                return result
+        
+        def getOffsetPoint(tetromino, rotation, check):
+                if tetromino == Tetrominos["I"]:
+                        result = PieceData.RotationTable["I"][check]
+                elif tetromino == Tetrominos["O"]:
+                        result = PieceData.RotationTable["O"][check]
+                else:
+                        result = PieceData.RotationTable["Other"][check]
+                
+                return result
+        
+        def getOffsetPoints(tetromino, prevRot, rotation, check):
+                prevOffset = PieceData.getOffsetPoint(tetromino, rotation, check)
+                nextOffset = PieceData.getOffsetPoint(tetromino, rotation, check)
+                
+                return (prevOffset[0] - nextOffset[0], prevOffset[1] - nextOffset[1])
 
 class Piece:
-        x = 0
-        y = 0
-
-        tetromino = 0
-        rotation = 0
-
-        #TODO: the constructor for this
+        def __init__(self, board, tetromino):
+                self.x = 4
+                self.y = 20
+                
+                self.board = board
+                
+                self.tetromino = tetromino
+                self.rotation = 0
+                
+                self.points = PieceData.getPiecePoints(self.tetromino, self.rotation)
+        
+        def update(self, moveLeft, moveRight, rotateLeft, rotateRight, softDrop, hardDrop):
+                pass
+        
+        def draw(self):
+                pass
+        
+        def fitAbsolute(self, x, y): # Check if piece fits at that exact position.
+                pass
+        
+        def fit(self, x, y): # Check if piece fits at that position relative to the piece.
+                return self.fitAbsolute(self.x + x, self.y + y)
+        
+        def tryMove(self, x, y):
+                pass
+                
+        def tryRotation(self, direction):
+                pass
 
 # Start pygame.
 pygame.init()
@@ -90,14 +160,15 @@ size = (width, height)
 # Get the screen surface, which is a thing we can use to draw stuff.
 screen = pygame.display.set_mode(size)
 
-# NOTE: This is using screen coordinates. +Y is down internally, but my wrapper functions for the board will automatically convert the coordinates into board coordinates.
+# NOTE: This is using screen coordinates.  Y is down internally, but my wrapper functions for the board will automatically convert the coordinates into board coordinates.
 board = Board()
+piece = Piece(board, Tetrominos["T"])
 
 while True:
         for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                         sys.exit()
-
+        
         screen.fill((0, 0, 0))
         board.draw(screen)
         pygame.display.flip()
