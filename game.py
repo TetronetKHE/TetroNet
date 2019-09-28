@@ -74,7 +74,7 @@ class Board:
                 self.tileMap.draw(surface, 0, 0)
 
         def getBoringBoard(self):
-                return [((self.tileMap.data[y][x] > 0) for x in range(self.width)) for y in range(self.height)]
+                return [((self.tileMap.data[y][x] > 0) for x in range(self.tileMap.width)) for y in range(self.tileMap.height)]
 
 class PieceData:
         TetrominoTable = [
