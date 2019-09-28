@@ -339,6 +339,7 @@ def tryUpdate(game, inputs):
 def drawGame(game):
         screen.fill((0, 0, 0))
         game.draw(screen)
+        print("draw")
         pygame.display.flip()
 
 human_mode = False
