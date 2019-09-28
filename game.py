@@ -74,7 +74,7 @@ class Board:
                 self.tileMap.draw(surface, 0, 0)
 
         def getBoringBoard(self):
-                return [((self.tileMap.data[y][x] > 0) for x in range(self.tileMap.width)) for y in range(self.tileMap.height)]
+                return [self.tileMap.data[y][x] > 0 for x in range(self.tileMap.width) for y in range(self.tileMap.height)]
 
 class PieceData:
         TetrominoTable = [
@@ -348,6 +348,7 @@ if human_mode:
                                 if event.key == pygame.K_UP: inputs[4] = False
                 
                 if frame % 60 == 0: game.update(inputs)
+                if frame % 60*8 == 0: print(game.board.getBoringBoard())
                 
                 drawGame(game)
                 frame += 1
