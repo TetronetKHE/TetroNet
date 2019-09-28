@@ -152,6 +152,7 @@ class PieceData:
 class Piece:
         MaxLockDelay = 4
         MaxMoveReset = 24
+        MaxSpins = 64
         
         def __init__(self, board, tetromino):
                 self.x = 4
@@ -167,6 +168,7 @@ class Piece:
                 self.points = PieceData.getPiecePoints(self.tetromino, self.rotation)
                 
                 self.moveResets = Piece.MaxMoveReset
+                self.spinsLeft = Piece.MaxSpins
                 
                 self.down = False
         
@@ -174,8 +176,12 @@ class Piece:
                 if inputs[0]: self.tryMove(-1, 0)
                 if inputs[1]: self.tryMove(1, 0)
                 
-                if inputs[2]: self.tryRotation(False)
-                if inputs[3]: self.tryRotation(True)
+                if inputs[2] and self.spinsLeft:
+                        self.tryRotation(False)
+                        self.spinsLeft -= 1
+                if inputs[3] and self.spinsLeft:
+                        self.tryRotation(True)
+                        self.spinsLeft -= 1
                 
                 if inputs[4]:
                         self.y = self.getYDropCoord()
