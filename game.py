@@ -179,6 +179,7 @@ class Piece:
                 
                 if inputs[4]:
                         self.y = self.getYDropCoord()
+                        self.placeDown()
                 elif self.tryMove(0, -1):
                         if self.moveResets:
                                 self.lockDelay = Piece.MaxLockDelay
