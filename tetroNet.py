@@ -6,7 +6,7 @@ from keras.layers import Dense, Activation, Flatten
 from keras.optimizers import Adam
 
 model = Sequential()
-model.add(Flatten(input_shape=(1,212)))
+model.add(Flatten(input_shape=(1,211)))
 model.add(Dense(30))
 model.add(Dense(1))
 model.add(Activation('linear'))

@@ -12,7 +12,7 @@ def train(model, steps, gamma):
         after = [0,0,0]
         while not lost:
             inpScores=[0,0,0,0,0]
-            for i in range(6):
+            for i in range(5):
                 inTest = [j==i for j in range(5)]
                 inpScores[i]=model.predict([[[game.getGameState(lastGame)+inTest]]])
             moves = inpScores.index(max(inpScores))
