@@ -1,13 +1,9 @@
-import numpy as np
-import train from evaluation.py
+#import numpy as np
+from evaluation import train
 
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Flatten
 from keras.optimizers import Adam
-
-from rl.agents.dqn import DQNAgent
-from rl.policy import EpsGreedyQPolicy
-from rl.memory import SequentialMemory
 
 model = Sequential()
 model.add(Flatten(input_shape=(1,212)))
