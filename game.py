@@ -179,10 +179,8 @@ class Piece:
                 
                 if inputs[2]:
                         self.tryRotation(False)
-                        self.spinsLeft -= 1
                 if inputs[3]:
                         self.tryRotation(True)
-                        self.spinsLeft -= 1
                 
                 if inputs[4]:
                         self.y = self.getYDropCoord()
