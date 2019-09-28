@@ -34,7 +34,7 @@ class TileMap:
 
 class Board:
         def __init__(self):
-                self.tileMap = TileMap(10, 20, [pygame.image.load(f"resources\\{x}.png") for x in range(1, 8)], 24)
+                self.tileMap = TileMap(10, 20, [pygame.image.load(os.path.dirname(os.path.abspath("resources/1.png"))+f"\\{x}.png") for x in range(1, 8)], 24)
         
         def update(self):
                 r = 0
@@ -171,8 +171,6 @@ class Piece:
                 self.down = False
         
         def update(self, inputs):
-                print((self.x, self.y))
-                
                 if inputs[0]: self.tryMove(-1, 0)
                 if inputs[1]: self.tryMove(1, 0)
                 
@@ -309,7 +307,12 @@ def tryUpdate(game, inputs):
         tmpGame.update(inputs)
         return tmpGame, tmpGame.linesCleared, tmpGame.gameOver
 
-human_mode = True
+def drawGame(game):
+        screen.fill((0, 100, 0))
+        game.draw(screen)
+        pygame.display.flip()
+
+human_mode = False
 
 # Start pygame.
 pygame.init()
@@ -346,7 +349,5 @@ if human_mode:
                 
                 if frame % 60 == 0: game.update(inputs)
                 
-                screen.fill((0, 100, 0))
-                game.draw(screen)
-                pygame.display.flip()
+                drawGame(game)
                 frame += 1
