@@ -315,6 +315,7 @@ class Game:
                 if self.piece.down:
                         if self.piece.y > self.highestTile: self.highestTile = self.piece.y
                         self.piece = Piece(self.board, self.nextQueue.getPiece())
+                        self.totalBlocksPlaced += 1
                 if not self.piece.fit(0, 0): self.gameOver = True
                 self.linesCleared = self.board.update()
                 if self.linesCleared:
@@ -335,7 +336,7 @@ def getGameState(game):
 def tryUpdate(game, inputs):
         tmpGame = copy.deepcopy(game)
         tmpGame.update(inputs)
-        return tmpGame, tmpGame.linesCleared, tmpGame.gameOver, tmpGame.highestTile
+        return tmpGame, tmpGame.linesCleared, tmpGame.gameOver, tmpGame.highestTile, tmpGame.totalBlocksPlaced
 
 def drawGame(game, screen):
         screen.fill((0, 0, 0))
