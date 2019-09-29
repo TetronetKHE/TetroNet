@@ -17,7 +17,7 @@ except:
     do = "nothing"
 print(model.summary())
 
-for i in range(20):
-    train(model,500,.85)
+for i in range(500):
+    train(model,20,.85)
     model.save("tetroNetBackup")
     print("Saved")
