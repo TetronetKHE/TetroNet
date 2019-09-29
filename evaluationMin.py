@@ -23,9 +23,9 @@ def train(model, steps, gamma, show=False):
             freq[move]+=1
             frames+=1
             if frames%300==30:
-                print(frames/60)
+                print(frames/60, [i/frames for i in freq])
             moves = [i==move for i in range(5)]
-            if random.random()>.9:                 #Tryhard algorithm
+            if random.random()>.55:                 #Tryhard algorithm
                 r = random.randint(0,4)
                 moves = [i==r for i in range(5)]
             scores += [0]
@@ -33,9 +33,9 @@ def train(model, steps, gamma, show=False):
             games += [[game.getGameState(lastGame),moves]]
             lastGame=after[0]
             if after[1]:
-                print("LINEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" + str(after[1]))
+                print("LINEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
             if after[1] or after[2] or after[3] or after[4]:
-                pt = 5*after[1]**1.2-100*after[2]-3*after[3]+2*after[4]
+                pt = after[4]
                 for i in range(len(scores)):
                     scores[-1-i] += pt*gamma**i
             if after[2]:
@@ -56,7 +56,7 @@ def train(model, steps, gamma, show=False):
             after = game.tryUpdate(ggame, moves)
             ggame=after[0]
             if after[1]:
-                print("LINEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"+str(after[1]))
+                print("LINEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
             lost = after[2]
         game.closeWindow()
         print("Sim end")
