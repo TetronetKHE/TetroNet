@@ -15,10 +15,10 @@ model.compile('adam','mean_absolute_error')
 try:
     model.load_weights("tetroNetBackup")
 except:
-    do = "nothing"
+    print("failed")
 print(model.summary())
 
 for i in range(500):
     train(model,20,.88)
-    model.save("tetroNetBackup")
+    model.save_weights("tetroNetBackup")
     print(str(i/500)+"Saved")

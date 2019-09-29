@@ -36,27 +36,27 @@ def train(model, steps, gamma, show=False):
                 print("LINEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" + str(after[1]))
             if after[1] or after[2] or after[3] or after[4]:
                 pt = 5*after[1]**1.2-100*after[2]-3*after[3]+2*after[4]
-                for i in range(len(scores)):
+                for i in range(frames):
                     scores[-1-i] += pt*gamma**i
             if after[2]:
                 lost=True
-        print(sum(scores)/len(scores), [i/frames for i in freq], frames/60)
+        print(sum(scores[-frames:-1])/len(scores[-frames:-1]), [i/frames for i in freq], frames/60)
         model.fit([[[games[i][0]+games[i][1]] for i in range(len(games))]],[[[i] for i in scores]], epochs=100, verbose=0)
-        lost=False
-        ggame = game.Game()
-        gameVisual = game.startWindow()
-        while not lost:
-            inpScores=[0,0,0,0,0]
-            game.drawGame(ggame,gameVisual)
-            for i in range(5):
-                inTest = [j==i for j in range(5)]
-                inpScores[i]=model.predict([[[game.getGameState(ggame)+inTest]]])
-            move = inpScores.index(max(inpScores))
-            moves = [i==move for i in range(5)]
-            after = game.tryUpdate(ggame, moves)
-            ggame=after[0]
-            if after[1]:
-                print("LINEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"+str(after[1]))
-            lost = after[2]
-        game.closeWindow()
-        print("Sim end")
+    lost=False
+    ggame = game.Game()
+    gameVisual = game.startWindow()
+    while not lost:
+        inpScores=[0,0,0,0,0]
+        game.drawGame(ggame,gameVisual)
+        for i in range(5):
+            inTest = [j==i for j in range(5)]
+            inpScores[i] = model.predict([[[game.getGameState(ggame)+inTest]]])
+        move = inpScores.index(max(inpScores))
+        moves = [i==move for i in range(5)]
+        after = game.tryUpdate(ggame, moves)
+        ggame=after[0]
+        if after[1]:
+            print("LINEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"+str(after[1]))
+        lost = after[2]
+    game.closeWindow()
+    print("Sim end")
