@@ -33,7 +33,7 @@ def train(model, steps, gamma, show=False):
             games += [[game.getGameState(lastGame),moves]]
             lastGame=after[0]
             if after[1] or after[2]:
-                pt = 10+5*after[1] - 100*after[2]-after[3]
+                pt = 10-after[3]
                 for i in range(len(scores)):
                     scores[-1-i] += pt*gamma**i
             if after[2]:
@@ -44,15 +44,15 @@ def train(model, steps, gamma, show=False):
         ggame = game.Game()
         gameVisual = game.startWindow()
         while not lost:
-                inpScores=[0,0,0,0,0]
-                game.drawGame(ggame, gameVisual)
-                for i in range(5):
-                        inTest = [j==i for j in range(5)]
-                        inpScores[i]=model.predict([[[game.getGameState(ggame)+inTest]]])
-                move = inpScores.index(max(inpScores))
-                moves = [i==move for i in range(5)]
-                after = game.tryUpdate(ggame, moves)
-                ggame=after[0]
-                lost = after[2]
-        game.closeWindow()
+            inpScores=[0,0,0,0,0]
+            game.drawGame(ggame,gameVisual)
+            for i in range(5):
+                inTest = [j==i for j in range(5)]
+                inpScores[i]=model.predict([[[game.getGameState(ggame)+inTest]]])
+            move = inpScores.index(max(inpScores))
+            moves = [i==move for i in range(5)]
+            after = game.tryUpdate(ggame, moves)
+            ggame=after[0]
+            lost = after[2]
+        game.closewindow()
         print("Sim end")
