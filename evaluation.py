@@ -33,7 +33,7 @@ def train(model, steps, gamma, show=False):
             games += [[game.getGameState(lastGame),moves]]
             lastGame=after[0]
             if after[1] or after[2]:
-                pt = 10+5*after[1]-100*after[2]-after[3]
+                pt = 30+5*after[1]-100*after[2]-3*after[3]
                 for i in range(len(scores)):
                     scores[-1-i] += pt*gamma**i
             if after[2]:
