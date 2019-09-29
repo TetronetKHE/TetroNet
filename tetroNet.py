@@ -11,6 +11,10 @@ model.add(Dense(120))
 model.add(Dense(1))
 model.add(Activation('linear'))
 model.compile('adam','mean_absolute_error')
+try:
+    model.load_weights("tetroNetBackup")
+except:
+    do = "nothing"
 print(model.summary())
 
 for i in range(20):
