@@ -150,9 +150,9 @@ class PieceData:
                 return (prevOffset[0] - nextOffset[0], prevOffset[1] - nextOffset[1])
 
 class Piece:
-        MaxLockDelay = 4
+        MaxLockDelay = 8
         MaxMoveReset = 8
-        MaxSpins = 4
+        MaxSpins = 32
         
         def __init__(self, board, tetromino):
                 self.x = 4
@@ -305,6 +305,7 @@ class Game:
                 self.rotation = 0
                 
                 self.highestTile = 0
+                self.totalBlocksPlaced = 0
                 self.gameOver = False
         
         def update(self, inputs):
