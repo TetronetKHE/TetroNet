@@ -20,4 +20,4 @@ print(model.summary())
 for i in range(500):
     train(model,20,.85)
     model.save("tetroNetBackup")
-    print("Saved")
+    print(str(i/500)+"Saved")
