@@ -13,7 +13,7 @@ model.add(Activation('linear'))
 model.compile('adam','mean_absolute_error')
 print(model.summary())
 
-for i in range(500):
-    train(model,20,.85)
+for i in range(20):
+    train(model,500,.85)
     model.save("tetroNetBackup")
     print("Saved")

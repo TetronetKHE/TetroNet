@@ -38,7 +38,7 @@ def train(model, steps, gamma, show=False):
                     scores[-1-i] += pt*gamma**i
             if after[2]:
                 lost=True
-        print(sum(scores)/len(scores), [i/frames for i in freq])
+        print(sum(scores)/len(scores), [i/frames for i in freq], frames/60)
         model.fit([[[games[i][0]+games[i][1]] for i in range(len(games))]],[[[i] for i in scores]], epochs=250, verbose=0)
         lost=False
         ggame = game.Game()
@@ -53,3 +53,4 @@ def train(model, steps, gamma, show=False):
             after = game.tryUpdate(ggame, moves)
             ggame=after[0]
             lost = after[2]
+        print("Sim end")
