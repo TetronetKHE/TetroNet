@@ -42,15 +42,17 @@ def train(model, steps, gamma, show=False):
         model.fit([[[games[i][0]+games[i][1]] for i in range(len(games))]],[[[i] for i in scores]], epochs=250, verbose=0)
         lost=False
         ggame = game.Game()
+        gameVisual = game.startWindow()
         while not lost:
-            inpScores=[0,0,0,0,0]
-            game.drawGame(ggame)
-            for i in range(5):
-                inTest = [j==i for j in range(5)]
-                inpScores[i]=model.predict([[[game.getGameState(ggame)+inTest]]])
-            move = inpScores.index(max(inpScores))
-            moves = [i==move for i in range(5)]
-            after = game.tryUpdate(ggame, moves)
-            ggame=after[0]
-            lost = after[2]
+                inpScores=[0,0,0,0,0]
+                game.drawGame(ggame, gameVisual)
+                for i in range(5):
+                        inTest = [j==i for j in range(5)]
+                        inpScores[i]=model.predict([[[game.getGameState(ggame)+inTest]]])
+                move = inpScores.index(max(inpScores))
+                moves = [i==move for i in range(5)]
+                after = game.tryUpdate(ggame, moves)
+                ggame=after[0]
+                lost = after[2]
+        game.closeWindow()
         print("Sim end")

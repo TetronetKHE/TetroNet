@@ -336,27 +336,31 @@ def tryUpdate(game, inputs):
         tmpGame.update(inputs)
         return tmpGame, tmpGame.linesCleared, tmpGame.gameOver, tmpGame.highestTile
 
-def drawGame(game):
+def drawGame(game, screen):
         screen.fill((0, 0, 0))
         game.draw(screen)
-        # print("draw")
         pygame.display.flip()
 
+def startWindow():
+        # Start pygame.
+        pygame.init()
+        
+        # Initialize some cool values.
+        width, height = 24*10, 24*20
+        size = (width, height)
+        
+        # Get the screen surface, which is a thing we can use to draw stuff.
+        screen = pygame.display.set_mode(size)
+        return screen
+
+def closeWindow():
+        pygame.display.quit()
+
 human_mode = False
-
-# Start pygame.
-pygame.init()
-
-# Initialize some cool values.
-width, height = 24*10, 24*20
-size = (width, height)
-
-# Get the screen surface, which is a thing we can use to draw stuff.
-screen = pygame.display.set_mode(size)
-
-frame = 0
-
 if human_mode:
+        startWindow()
+        
+        frame = 0
         game = Game()
         inputs = [0, 0, 0, 0, 0]
         
@@ -379,6 +383,9 @@ if human_mode:
                 
                 if frame % 60 == 0: game.update(inputs)
                 if frame % 60*8 == 0: print(game.piece.getBoringPiece2())
+                if game.gameOver: break
                 
                 drawGame(game)
                 frame += 1
+        
+        closeWindow()
