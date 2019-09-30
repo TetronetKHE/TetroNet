@@ -20,7 +20,7 @@ print(model.summary())
 
 saves=500
 gamma=.88
-tryhard=.98
+tryhard=.94
 
 for i in range(saves):
     train(model,int(10000/saves),gamma,tryhard)
