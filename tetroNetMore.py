@@ -13,12 +13,15 @@ model.add(Dense(1))
 model.add(Activation('linear'))
 model.compile('adam','mean_absolute_error')
 try:
-    model.load_weights("tetroNetBackup")
+    model.load_weights("tetroNetBackupDN")
 except:
     print("failed")
 print(model.summary())
 
-for i in range(200):
-    train(model,50,.88)
+saves=200
+gamma=.88
+
+for i in range(saves):
+    train(model,int(10000/saves),gamma)
     model.save_weights("tetroNetBackupDN")
-    print(str(i/500)+"Saved")
+    print(str(i/saves)+"Saved")
