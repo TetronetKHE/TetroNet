@@ -35,8 +35,9 @@ def train(model, steps, gamma, tryhard, show=False):
             lastGame=after[0]
             if after[1]:
                 print("LINEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" + str(after[1]))
-            if after[1] or after[2] or after[3] or after[4]:
-                pt = 5*after[1]**1.2-100*after[2]-3*after[3]+2*after[4]
+            if after[1] or after[2] or after[5]:
+                #print("eval")
+                pt = 5*after[1]**1.2-100*after[2]-after[5]
                 score+=pt
                 for i in range(frames):
                     scores[-1-i] += pt*gamma**i

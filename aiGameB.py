@@ -3,6 +3,10 @@ import numpy as np
 import random
 import copy
 
+from keras.models import Sequential
+from keras.layers import Dense, Activation, Flatten, Dropout
+from keras.optimizers import Adam
+
 Tetrominos = {
         "I" : 0,
         "J" : 1,
@@ -312,12 +316,10 @@ class Game:
                 if self.gameOver: return
                 
                 self.piece.update(inputs)
-                self.pieceHeight=0
                 if self.piece.down:
                         if self.piece.y > self.highestTile: self.highestTile = self.piece.y
                         self.piece = Piece(self.board, self.nextQueue.getPiece())
                         self.totalBlocksPlaced += 1
-                        self.pieceHeight=self.piece.y
                 if not self.piece.fit(0, 0): self.gameOver = True
                 self.linesCleared = self.board.update()
                 if self.linesCleared:
@@ -338,7 +340,7 @@ def getGameState(game):
 def tryUpdate(game, inputs):
         tmpGame = copy.deepcopy(game)
         tmpGame.update(inputs)
-        return tmpGame, tmpGame.linesCleared, tmpGame.gameOver, tmpGame.highestTile, tmpGame.totalBlocksPlaced, tmpGame.pieceHeight
+        return tmpGame, tmpGame.linesCleared, tmpGame.gameOver, tmpGame.highestTile, tmpGame.totalBlocksPlaced
 
 def drawGame(game, screen):
         screen.fill((0, 0, 0))
@@ -360,41 +362,41 @@ def startWindow():
 def closeWindow():
         pygame.display.quit()
 
-human_mode = False
+human_mode = True
+
+model = Sequential()
+model.add(Flatten(input_shape=(1,222)))
+model.add(Dense(180,activation="relu"))
+model.add(Dense(120,activation="relu"))
+model.add(Dense(1))
+model.add(Activation('linear'))
+model.compile('adam','mean_absolute_error')
+model.load_weights('tetroNetBackupB')
 
 pygame.mixer.init()
 pygame.mixer.music.load('resources\\Tetris.ogg')
 pygame.mixer.music.play(-1)
 
-if human_mode:
-        startWindow()
+while human_mode:
+        screen = startWindow()
         
         frame = 0
         game = Game()
         inputs = [0, 0, 0, 0, 0]
         
         while True:
-                for event in pygame.event.get():
-                        if event.type == pygame.QUIT:
-                                sys.exit()
-                        if event.type == pygame.KEYDOWN:
-                                if event.key == pygame.K_LEFT: inputs[0] = True
-                                if event.key == pygame.K_RIGHT: inputs[1] = True
-                                if event.key == pygame.K_z: inputs[2] = True
-                                if event.key == pygame.K_x: inputs[3] = True
-                                if event.key == pygame.K_UP: inputs[4] = True
-                        if event.type == pygame.KEYUP:
-                                if event.key == pygame.K_LEFT: inputs[0] = False
-                                if event.key == pygame.K_RIGHT: inputs[1] = False
-                                if event.key == pygame.K_z: inputs[2] = False
-                                if event.key == pygame.K_x: inputs[3] = False
-                                if event.key == pygame.K_UP: inputs[4] = False
-                
-                if frame % 60 == 0: game.update(inputs)
-                if frame % 60*8 == 0: print(game.piece.getBoringPiece2())
+                inpScores=[0,0,0,0,0,0] #fitness scores of each inputs
+                for i in range(6):
+                        inTest = [j==i for j in range(6)]
+                        inpScores[i]=model.predict([[[getGameState(game)+inTest]]])
+                move = inpScores.index(max(inpScores))
+                inputs = [i==move for i in range(5)]
+                if frame % 20 == 0:
+                        game.update(inputs)
+                        print(inputs)
                 if game.gameOver: break
                 
-                drawGame(game)
+                drawGame(game, screen)
                 frame += 1
         
         closeWindow()

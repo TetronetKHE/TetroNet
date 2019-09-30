@@ -1,5 +1,5 @@
 #import numpy as np
-from evaluationMore import train
+from evaluationB import train
 
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Flatten, Dropout
@@ -13,16 +13,16 @@ model.add(Dense(1))
 model.add(Activation('linear'))
 model.compile('adam','mean_absolute_error')
 try:
-    model.load_weights("tetroNetBackupDN")
+    model.load_weights("tetroNetBackupB")
 except:
     print("failed")
 print(model.summary())
 
-saves=200
+saves=500
 gamma=.88
-tryhard=.9999
+tryhard=.98
 
 for i in range(saves):
     train(model,int(10000/saves),gamma,tryhard)
-    model.save_weights("tetroNetBackupDN")
+    model.save_weights("tetroNetBackupB")
     print(str(i/saves)+"Saved")
