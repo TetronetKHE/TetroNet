@@ -18,9 +18,9 @@ except:
     print("failed")
 print(model.summary())
 
-saves=500
+saves=300
 gamma=.88
-tryhard=.94
+tryhard=.95
 
 for i in range(saves):
     train(model,int(10000/saves),gamma,tryhard)

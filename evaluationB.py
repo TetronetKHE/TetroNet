@@ -36,15 +36,15 @@ def train(model, steps, gamma, tryhard, show=False):
             if after[1]:
                 print("LINEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" + str(after[1]))
             if after[1] or after[2] or after[5]:
-                #print("eval")
                 pt = 5*after[1]**1.2-100*after[2]+20-after[5]
                 score+=pt
+                #print(score)
                 for i in range(frames):
                     scores[-1-i] += pt*gamma**i
             if after[2]:
                 lost=True
-        print(score/frames, [i/frames for i in freq], frames)
-        model.fit([[[games[i][0]+games[i][1]] for i in range(len(games))]],[[[i] for i in scores]], epochs=100, verbose=0)
+        print(score, [i/frames for i in freq], frames)
+        model.fit([[[games[i][0]+games[i][1]] for i in range(len(games))]],[[[i] for i in scores]], epochs=70, verbose=0)
     lost=False
     ggame = game.Game()
     gameVisual = game.startWindow()
