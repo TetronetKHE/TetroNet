@@ -373,6 +373,10 @@ model.add(Activation('linear'))
 model.compile('adam','mean_absolute_error')
 model.load_weights('tetroNetBackup')
 
+pygame.mixer.init()
+pygame.mixer.music.load('resources\\Tetris.ogg')
+pygame.mixer.music.play(-1)
+
 while human_mode:
         screen = startWindow()
         

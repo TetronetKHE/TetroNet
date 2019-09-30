@@ -13,6 +13,7 @@ def train(model, steps, gamma, show=False):
         lost=False
         after = [0,0,0]
         freq = [0,0,0,0,0]
+        score=0
         frames=0
         while not lost:
             inpScores=[0,0,0,0,0] #fitness scores of each inputs
@@ -36,11 +37,12 @@ def train(model, steps, gamma, show=False):
                 print("LINEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" + str(after[1]))
             if after[1] or after[2] or after[3] or after[4]:
                 pt = 5*after[1]**1.2-100*after[2]-3*after[3]+2*after[4]
+                score+=pt
                 for i in range(frames):
                     scores[-1-i] += pt*gamma**i
             if after[2]:
                 lost=True
-        print(sum(scores[-frames:-1])/len(scores[-frames:-1]), [i/frames for i in freq], frames/60)
+        print(score/frames, [i/frames for i in freq], frames)
         model.fit([[[games[i][0]+games[i][1]] for i in range(len(games))]],[[[i] for i in scores]], epochs=100, verbose=0)
     lost=False
     ggame = game.Game()

@@ -1,5 +1,5 @@
 #import numpy as np
-from evaluationMore import train
+from evaluationMoreMin import train
 
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Flatten, Dropout
@@ -18,7 +18,7 @@ except:
     print("failed")
 print(model.summary())
 
-for i in range(200):
-    train(model,50,.88)
-    model.save_weights("tetroNetBackupDN")
+for i in range(500):
+    train(model,20,.88)
+    model.save_weights("tetroNetBackupDNMin")
     print(str(i/500)+"Saved")

@@ -359,6 +359,11 @@ def closeWindow():
         pygame.display.quit()
 
 human_mode = False
+
+pygame.mixer.init()
+pygame.mixer.music.load('resources\\Tetris.ogg')
+pygame.mixer.music.play(-1)
+
 if human_mode:
         startWindow()
         

@@ -371,7 +371,7 @@ model.add(Dense(120,activation="relu"))
 model.add(Dense(1))
 model.add(Activation('linear'))
 model.compile('adam','mean_absolute_error')
-model.load_weights('tetroNetBackupDN')
+model.load_weights('tetroNetBackupDNMin')
 
 pygame.mixer.init()
 pygame.mixer.music.load('resources\\Tetris.ogg')
