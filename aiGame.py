@@ -46,7 +46,6 @@ while True:
 	gwindow.updateEvents()
 	if gwindow.everyXFrames(20):
 		# ADD AI CODE HERE
-		print(game.tryUpdate(gwindow.inputs))
 		game.update(gwindow.inputs)
 		# END AI CODE
 		if gwindow.shouldStop(game): break

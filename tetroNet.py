@@ -19,6 +19,6 @@ except:
 print(model.summary())
 
 for i in range(500):
-    train(model,50,.88)
+    train(model, 20, .88)
     model.save_weights("backups\\tetroNetBackup.coolFileExtension")
     print(f"Saved. {i}/500 complete.")

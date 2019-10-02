@@ -14,7 +14,15 @@ Tetrominos = {
 	"Z" : 6,
 	"Length": 7
 }
-Tiles = [pygame.image.load(os.path.dirname(os.path.abspath("resources/1.png"))+f"\\{x}.png") for x in range(1, 8)]
+
+def getResourcePath(path):
+	return os.path.dirname(os.path.abspath("resources/1.png")) + "\\" + path
+
+Tiles = [pygame.image.load(getResourcePath(f"{x}.png")) for x in range(0, 8)]
+TileSize = 24
+BoardWidth = 10
+BoardHeight = 20
+
 InputLength = 6
 
 class TileMap:
@@ -32,11 +40,11 @@ class TileMap:
 				self.drawTile(surface, ox, oy, x, y, self.data[self.height - y - 1][x])
 	
 	def drawTile(self, surface, ox, oy, tx, ty, tile):
-		if tile > 0: surface.blit(Tiles[tile - 1], (ox + (tx * self.tileSize), oy + (ty * self.tileSize)))
+		surface.blit(Tiles[tile], (ox + (tx * self.tileSize), oy + (ty * self.tileSize)))
 
 class Board:
 	def __init__(self):
-		self.tileMap = TileMap(10, 20, 24)
+		self.tileMap = TileMap(BoardWidth, BoardHeight, TileSize)
 	
 	def update(self):
 		r = 0
@@ -152,7 +160,7 @@ class PieceData:
 		return (prevOffset[0] - nextOffset[0], prevOffset[1] - nextOffset[1])
 
 class Piece:
-	MaxLockDelay = 8
+	MaxLockDelay = 80
 	MaxMoveReset = 8
 	MaxSpins = 32
 	
@@ -281,13 +289,24 @@ class Bag:
 
 class NextQueue:
 	MaxNext = 3
+	Graphic = pygame.image.load(getResourcePath("next.png"))
 	
 	def __init__(self):
 		self.bag = Bag()
 		self.getNewQueue()
 	
-	def draw(self):
+	def draw(self, surface, tileMap):
+		surface.blit(NextQueue.Graphic, (tileMap.width * tileMap.tileSize, 0))
 		
+		# TODO: just straight up store the next queue as an array of piece points
+		#		instead of doing this thing
+		tmpPts = PieceData.getPiecePoints(self.queue[0], 0)
+		if self.queue[0] == Tetrominos["I"] or self.queue[0] == Tetrominos["O"]:
+			for i in range(len(tmpPts)):
+				tileMap.drawTile(surface, tileMap.tileSize / 2, 0, tileMap.width + 1 + tmpPts[i][0], 2 - tmpPts[i][1], self.queue[0] + 1)
+		else:
+			for i in range(len(tmpPts)):
+				tileMap.drawTile(surface, 0, 0, tileMap.width + 2 + tmpPts[i][0], 2 - tmpPts[i][1], self.queue[0] + 1)
 	
 	def getNewQueue(self):
 		self.queue = [self.bag.getPiece() for i in range(NextQueue.MaxNext)]
@@ -323,9 +342,11 @@ class Game:
 			if self.piece.y > self.highestTile: self.highestTile = self.piece.y
 			self.piece = Piece(self.board, self.nextQueue.getPiece())
 			if not self.piece.fit(0, 0):
-				print("== Game Over ==")
-				self.gameOver = True
-				return
+				self.piece.y += 1
+				if not self.piece.fit(0, 0):
+					print("== Game Over ==")
+					self.gameOver = True
+					return
 			self.totalBlocksPlaced += 1
 		
 		self.linesCleared = self.board.update()
@@ -345,7 +366,7 @@ class Game:
 	def draw(self, surface):
 		self.board.draw(surface)
 		self.piece.draw(surface)
-		self.nextQueue.draw(surface)
+		self.nextQueue.draw(surface, self.board.tileMap)
 	
 	def getState(self):
 		result = []
@@ -391,9 +412,12 @@ class GameWindow:
 		pygame.display.quit()
 	
 	def updateEvents(self):
+		for i in range(2, 5):
+			if self.inputs[i]: self.inputs[i] = False
+		
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
-				self.shouldStop = True
+				self.stop = True
 			if self.humanMode:
 				if event.type == pygame.KEYDOWN:
 					if event.key == pygame.K_LEFT:  self.inputs[0] = True
@@ -426,22 +450,20 @@ class GameWindow:
 		self.frames = 0
 		self.inputs = [0 for i in range(InputLength)]
 
-"""
-gwindow = GameWindow(True)
-gwindow.cueTheMusic()
-
-game = Game()
-
-while True:
-	gwindow.updateEvents()
-	if gwindow.everyXFrames(20):
-		# ADD AI CODE HERE
-		print(game.tryUpdate(gwindow.inputs))
-		game.update(gwindow.inputs)
-		# END AI CODE
-		if gwindow.shouldStop(game): break
-	gwindow.drawGame(game)
-
-gwindow.close()
-sys.exit()
-"""
+if __name__ == "__main__":
+	gwindow = GameWindow(True)
+	gwindow.cueTheMusic()
+	
+	game = Game()
+	
+	while True:
+		gwindow.updateEvents()
+		if gwindow.everyXFrames(5):
+			# ADD AI CODE HERE
+			game.update(gwindow.inputs)
+			# END AI CODE
+			if gwindow.shouldStop(game): break
+		gwindow.drawGame(game)
+	
+	gwindow.close()
+	sys.exit()
