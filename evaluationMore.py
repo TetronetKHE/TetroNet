@@ -19,7 +19,7 @@ def train(model, steps, gamma, tryhard, show=False):
             inpScores=[0,0,0,0,0,0] #fitness scores of each inputs
             for i in range(6):
                 inTest = [j==i for j in range(6)]
-                inpScores[i]=model.predict([[[game.getGameState(lastGame)+inTest]]])
+                inpScores[i]=model.predict([[[game.getState(lastGame)+inTest]]])
             move = inpScores.index(max(inpScores)) #find largest fitness
             freq[move]+=1
             frames+=1
@@ -31,7 +31,7 @@ def train(model, steps, gamma, tryhard, show=False):
                 moves = [i==r for i in range(6)]
             scores += [0]
             after = game.tryUpdate(lastGame,moves[:-1])  #get next states
-            games += [[game.getGameState(lastGame),moves]]
+            games += [[game.getState(lastGame),moves]]
             lastGame=after[0]
             if after[1]:
                 print("LINEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" + str(after[1]))
@@ -52,7 +52,7 @@ def train(model, steps, gamma, tryhard, show=False):
         game.drawGame(ggame,gameVisual)
         for i in range(6):
             inTest = [j==i for j in range(6)]
-            inpScores[i] = model.predict([[[game.getGameState(ggame)+inTest]]])
+            inpScores[i] = model.predict([[[game.getState(ggame)+inTest]]])
         move = inpScores.index(max(inpScores))
         moves = [i==move for i in range(5)]
         after = game.tryUpdate(ggame, moves)

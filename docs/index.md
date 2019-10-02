@@ -11,3 +11,6 @@ TetroNet is an AI that can play a tetromino falling block game. Or... maybe it c
 5. Finally, install Tensorflow. This'll take a bit. `python -m pip install tensorflow`
 
 Then just run `tetroNet.py`, and watch the AI fail over and over again!
+
+# How do I configure it?
+We're working on that.

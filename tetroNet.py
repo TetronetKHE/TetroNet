@@ -6,19 +6,19 @@ from keras.layers import Dense, Activation, Flatten, Dropout
 from keras.optimizers import Adam
 
 model = Sequential()
-model.add(Flatten(input_shape=(1,221)))
+model.add(Flatten(input_shape=(1,222)))
 model.add(Dense(180,activation="relu"))
 model.add(Dense(120,activation="relu"))
 model.add(Dense(1))
 model.add(Activation('linear'))
 model.compile('adam','mean_absolute_error')
 try:
-    model.load_weights("tetroNetBackup")
+    model.load_weights("backups\\tetroNetBackup.coolFileExtension")
 except:
-    print("failed")
+    pass
 print(model.summary())
 
 for i in range(500):
-    train(model,20,.88)
-    model.save_weights("tetroNetBackup")
-    print(str(i/500)+"Saved")
+    train(model,50,.88)
+    model.save_weights("backups\\tetroNetBackup.coolFileExtension")
+    print(f"Saved. {i}/500 complete.")
