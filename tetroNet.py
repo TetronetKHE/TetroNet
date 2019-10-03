@@ -13,12 +13,16 @@ model.add(Dense(1))
 model.add(Activation('linear'))
 model.compile('adam','mean_absolute_error')
 try:
-    model.load_weights("backups\\tetroNetBackup.coolFileExtension")
+	model.load_weights("backups\\tetroNetBackup.coolFileExtension")
+	print("== Loaded weights from backup. ==")
 except:
-    pass
+	print("== Uh oh! Could not load backup! ==")
+	print("== If this is the first time running TetroNet, that's okay! ==")
+	print("== Otherwise, that's pretty bad! ==")
 print(model.summary())
 
-for i in range(500):
-    train(model, 20, .88)
-    model.save_weights("backups\\tetroNetBackup.coolFileExtension")
-    print(f"Saved. {i}/500 complete.")
+# for i in range(100):
+while True:
+	train(model, 20, .88)
+	model.save_weights("backups\\tetroNetBackup.coolFileExtension")
+	print(f"== Saved weights to backup. {i}/500 complete. ==")

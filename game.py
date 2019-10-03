@@ -22,6 +22,7 @@ Tiles = [pygame.image.load(getResourcePath(f"{x}.png")) for x in range(0, 8)]
 TileSize = 24
 BoardWidth = 10
 BoardHeight = 20
+NextWidth = 5
 
 InputLength = 6
 
@@ -303,10 +304,10 @@ class NextQueue:
 		tmpPts = PieceData.getPiecePoints(self.queue[0], 0)
 		if self.queue[0] == Tetrominos["I"] or self.queue[0] == Tetrominos["O"]:
 			for i in range(len(tmpPts)):
-				tileMap.drawTile(surface, tileMap.tileSize / 2, 0, tileMap.width + 1 + tmpPts[i][0], 2 - tmpPts[i][1], self.queue[0] + 1)
+				tileMap.drawTile(surface, tileMap.tileSize / 2, tileMap.tileSize / 2, tileMap.width + 1 + tmpPts[i][0], 2 - tmpPts[i][1], self.queue[0] + 1)
 		else:
 			for i in range(len(tmpPts)):
-				tileMap.drawTile(surface, 0, 0, tileMap.width + 2 + tmpPts[i][0], 2 - tmpPts[i][1], self.queue[0] + 1)
+				tileMap.drawTile(surface, 0, tileMap.tileSize / 2, tileMap.width + 2 + tmpPts[i][0], 2 - tmpPts[i][1], self.queue[0] + 1)
 	
 	def getNewQueue(self):
 		self.queue = [self.bag.getPiece() for i in range(NextQueue.MaxNext)]
@@ -381,7 +382,8 @@ class GameWindow:
 		pygame.init()
 		
 		# Initialize some cool values.
-		self.width, self.height = 24*15, 24*20
+		self.width = 24 * (BoardWidth + NextWidth)
+		self.height = 24 * BoardHeight
 		self.size = (self.width, self.height)
 		
 		# Get the screen surface, which is a thing we can use to draw stuff.
@@ -458,7 +460,7 @@ if __name__ == "__main__":
 	
 	while True:
 		gwindow.updateEvents()
-		if gwindow.everyXFrames(5):
+		if gwindow.everyXFrames(1):
 			# ADD AI CODE HERE
 			game.update(gwindow.inputs)
 			# END AI CODE

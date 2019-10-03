@@ -50,7 +50,8 @@ def train(model, steps, gamma):
 		# AI magic
 		model.fit([[[games[i][0] + games[i][1]] for i in range(len(games))]], [[[i] for i in scores]], epochs=100, verbose=0)
 	
-	playAIGame(model)
+	for step in range(2):
+		playAIGame(model)
 
 def playAIGame(model):
 	gwindow = game.GameWindow()
