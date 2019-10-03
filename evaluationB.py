@@ -44,7 +44,7 @@ def train(model, steps, gamma, tryhard, show=False):
             if after[2]:
                 lost=True
         print(score, [i/frames for i in freq], frames)
-        model.fit([[[games[i][0]+games[i][1]] for i in range(len(games))]],[[[i] for i in scores]], epochs=70, verbose=0)
+    model.fit([[[games[i][0]+games[i][1]] for i in range(len(games))]],[[[i] for i in scores]], epochs=200, verbose=2)
     lost=False
     ggame = game.Game()
     gameVisual = game.startWindow()

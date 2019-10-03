@@ -339,7 +339,7 @@ def tryUpdate(game, inputs):
         tmpGame = copy.deepcopy(game)
         tmpGame.update(inputs)
         return tmpGame, tmpGame.linesCleared, tmpGame.gameOver, tmpGame.highestTile, tmpGame.totalBlocksPlaced, tmpGame.pieceHeight
-
+#                 0          1                       2                   3                     4                          5
 def drawGame(game, screen):
         screen.fill((0, 0, 0))
         game.draw(screen)
