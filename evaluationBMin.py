@@ -1,11 +1,12 @@
 import game
 import random
 
-def train(model, steps, gamma, tryhard = 0.1):
+def train(model, steps, gamma, tryhard=0.1):
 	games = []
 	scores = []
 	for step in range(steps):
-		print(f"Step {step} of {steps}") # print progress
+		# Print step progress
+		print(f"Step {step} of {steps}")
 		
 		lastGame = game.Game()
 		
