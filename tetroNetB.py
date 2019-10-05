@@ -20,8 +20,8 @@ except:
 print(model.summary())
 
 saves=300
-gamma=.87
-tryhard=.99
+gamma=.99
+tryhard=1
 
 for i in range(saves):
     train(model,int(100000/saves),gamma,tryhard)

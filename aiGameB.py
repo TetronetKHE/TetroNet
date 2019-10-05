@@ -366,7 +366,8 @@ human_mode = True
 
 model = Sequential()
 model.add(Flatten(input_shape=(1,222)))
-model.add(Dense(180,activation="relu"))
+model.add(Dense(280,activation="relu"))
+model.add(Dense(220,activation="relu"))
 model.add(Dense(120,activation="relu"))
 model.add(Dense(1))
 model.add(Activation('linear'))
