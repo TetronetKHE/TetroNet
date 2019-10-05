@@ -15,19 +15,19 @@ def train(model, steps, gamma, show=False):
         freq = [0,0,0,0,0]
         frames=0
         while not lost:
-            inpScores=[0,0,0,0,0] #fitness scores of each inputs
-            for i in range(5):
-                inTest = [j==i for j in range(5)]
-                inpScores[i]=model.predict([[[game.getState(lastGame)+inTest]]])
-            move = inpScores.index(max(inpScores)) #find largest fitness
+            inputScores=[0,0,0,0,0] #fitness scores of each inputs
+            for i in range(game.InputLength):
+                inTest = [j==i for j in range(game.InputLength)]
+                inputScores[i]=model.predict([[[game.getState(lastGame)+inTest]]])
+            move = inputScores.index(max(inputScores)) #find largest fitness
             freq[move]+=1
             frames+=1
             if frames%300==30:
                 print(frames/60, [i/frames for i in freq])
-            moves = [i==move for i in range(5)]
+            moves = [i==move for i in range(game.InputLength)]
             if random.random()>.55:                 #Tryhard algorithm
-                r = random.randint(0,4)
-                moves = [i==r for i in range(5)]
+                r = random.randint(0, game.InputLength)
+                moves = [i==r for i in range(game.InputLength)]
             scores += [0]
             after = game.tryUpdate(lastGame,moves)  #get next states
             games += [[game.getState(lastGame),moves]]
@@ -46,13 +46,13 @@ def train(model, steps, gamma, show=False):
         ggame = game.Game()
         gameVisual = game.startWindow()
         while not lost:
-            inpScores=[0,0,0,0,0]
+            inputScores=[0,0,0,0,0]
             game.drawGame(ggame,gameVisual)
-            for i in range(5):
-                inTest = [j==i for j in range(5)]
-                inpScores[i]=model.predict([[[game.getState(ggame)+inTest]]])
-            move = inpScores.index(max(inpScores))
-            moves = [i==move for i in range(5)]
+            for i in range(game.InputLength):
+                inTest = [j==i for j in range(game.InputLength)]
+                inputScores[i]=model.predict([[[game.getState(ggame)+inTest]]])
+            move = inputScores.index(max(inputScores))
+            moves = [i==move for i in range(game.InputLength)]
             after = game.tryUpdate(ggame, moves)
             ggame=after[0]
             if after[1]:

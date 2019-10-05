@@ -329,8 +329,6 @@ class Game:
 		self.nextQueue = NextQueue()
 		self.piece = Piece(self.board, self.nextQueue.getPiece())
 		
-		self.rotation = 0
-		
 		self.highestTile = 0
 		self.totalBlocksPlaced = 0
 		self.gameOver = False
@@ -360,6 +358,32 @@ class Game:
 		tmpGame = copy.deepcopy(self)
 		tmpGame.update(inputs)
 		return (tmpGame,) + tmpGame.getInformation() # Yeah yeah this doesn't make sense
+	
+	# Shoutout to https://github.com/nuno-faria/tetris-ai/blob/6b3d73d680b850b6d98146fa8315bab1821896dc/tetris.py#L186
+	def getBumpiness(self):
+		heights = []
+		
+		for x in range(self.board.tileMap.width):
+			ray = self.board.tileMap.height
+			while ray > 0:
+				if self.board.getTileAt(x, ray - 1):
+					break
+				ray -= 1
+			heights.append(ray)
+		
+	
+	def getMaxHeight(self):
+		heights = []
+		
+		for x in range(self.board.tileMap.width):
+			heights += [0]
+			ray = self.board.tileMap.height
+			while ray > 0:
+				if self.board.getTileAt(x, ray - 1):
+					break
+				ray -= 1
+		
+		return max(height)
 	
 	def getInformation(self):
 		return self.linesCleared, self.gameOver, self.highestTile, self.totalBlocksPlaced
@@ -456,16 +480,16 @@ if __name__ == "__main__":
 	gwindow = GameWindow(True)
 	gwindow.cueTheMusic()
 	
-	game = Game()
+	gameInst = Game()
 	
 	while True:
 		gwindow.updateEvents()
 		if gwindow.everyXFrames(1):
 			# ADD AI CODE HERE
-			game.update(gwindow.inputs)
+			gameInst.update(gwindow.inputs)
 			# END AI CODE
-			if gwindow.shouldStop(game): break
-		gwindow.drawGame(game)
+			if gwindow.shouldStop(gameInst): break
+		gwindow.drawGame(gameInst)
 	
 	gwindow.close()
 	sys.exit()
