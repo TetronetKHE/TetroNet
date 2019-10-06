@@ -57,7 +57,7 @@ class AI:
 	def saveWeights(self):
 		self.model.save_weights(AI.SaveDirectory + self.saveFileName)
 	
-	def train(self, saves=300, steps=50, gamma=.87, tryhard=.1, evaluation=None):
+	def train(self, saves=300, steps=50, gamma=.99, tryhard=.03, evaluation=None):
 		if not evaluation:
 			import evaluation
 		

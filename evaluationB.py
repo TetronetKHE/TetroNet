@@ -39,7 +39,7 @@ def train(model, steps, gamma, tryhard=0.1):
 			
 			lastGame = after[0]
 			if after[1] or after[2] or after[5]:
-				pt = 5 * after[1] ** 1.2 - 100 * after[2] + 40 - 2 * after[5]
+				pt = 5 * after[1] ** 1.2 - 100 * after[2] - 2 * after[5]
 				score += pt
 				for i in range(frames):
 					scores[-1-i] += pt * gamma ** i
@@ -47,4 +47,4 @@ def train(model, steps, gamma, tryhard=0.1):
 			if lastGame.gameOver: break
 		print(round(score / frames, 2), frames, [round(i/frames, 4) for i in freq])
 	# AI magic
-	model.fit([[[games[i][0] + games[i][1]] for i in range(len(games))]], [[[i] for i in scores]], epochs=200, verbose=2)
+	model.fit([[[games[i][0] + games[i][1]] for i in range(len(games))]], [[[i] for i in scores]], epochs=30, verbose=2)

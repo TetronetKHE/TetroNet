@@ -331,13 +331,16 @@ class Game:
 		
 		self.highestTile = 0
 		self.totalBlocksPlaced = 0
+		self.currentTilePlace = 0
 		self.gameOver = False
 	
 	def update(self, inputs):
 		if self.gameOver: return
 		
 		self.piece.update(inputs, inputs[InputLength - 1])
+		self.currentTilePlace=0
 		if self.piece.down:
+			self.currentTilePlace = self.piece.y
 			if self.piece.y > self.highestTile: self.highestTile = self.piece.y
 			self.piece = Piece(self.board, self.nextQueue.getPiece())
 			if not self.piece.fit(0, 0):
@@ -386,7 +389,7 @@ class Game:
 		return max(height)
 	
 	def getInformation(self):
-		return self.linesCleared, self.gameOver, self.highestTile, self.totalBlocksPlaced
+		return self.linesCleared, self.gameOver, self.highestTile, self.totalBlocksPlaced, self.currentTilePlace
 	
 	def draw(self, surface):
 		self.board.draw(surface)
@@ -490,6 +493,8 @@ if __name__ == "__main__":
 			# END AI CODE
 			if gwindow.shouldStop(gameInst): break
 		gwindow.drawGame(gameInst)
+		a=gameInst.getInformation()[4]
+		if a:print(a)
 	
 	gwindow.close()
 	sys.exit()
