@@ -27,7 +27,7 @@ def train(model, steps, gamma, tryhard=0.1):
 			
 			move = inputScores.index(max(inputScores))
 			if random.random() < tryhard: # Tryhard algorithm
-				move = random.randint(0, game.InputLength)
+				move = random.randint(0, game.InputLength-1)
 			freq[move]+=1
 			moves = [i==move for i in range(game.InputLength)]
 			
