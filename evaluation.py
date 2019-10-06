@@ -1,7 +1,7 @@
 import game
 import random
 
-def train(model, steps, gamma, tryhard=0.1):
+def train(model, steps, gamma, tryhard=0.1, epochs):
 	games = []
 	scores = []
 	for step in range(steps):
@@ -47,4 +47,4 @@ def train(model, steps, gamma, tryhard=0.1):
 			if lastGame.gameOver: break
 		print(round(score / frames, 2), frames, [round(i/frames, 4) for i in freq])
 	# AI magic
-	model.fit([[[games[i][0] + games[i][1]] for i in range(len(games))]], [[[i] for i in scores]], epochs=100, verbose=0)
+	model.fit([[[games[i][0] + games[i][1]] for i in range(len(games))]], [[[i] for i in scores]], epochs=epochs, verbose=0)
