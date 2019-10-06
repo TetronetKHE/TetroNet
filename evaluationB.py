@@ -4,6 +4,7 @@ import random
 def train(model, steps, gamma, tryhard=0.1):
 	games = []
 	scores = []
+	lines=0
 	for step in range(steps):
 		# Print step progress
 		print(f"Step {step} of {steps}")
@@ -39,12 +40,13 @@ def train(model, steps, gamma, tryhard=0.1):
 			
 			lastGame = after[0]
 			if after[1] or after[2] or after[5]:
-				pt = 5 * after[1] ** 1.2 - 100 * after[2] - 2 * after[5]
-				score += pt
-				for i in range(frames):
-					scores[-1-i] += pt * gamma ** i
+                                lines+=after[1]
+                                pt = 5 * after[1] ** 1.2 - 100 * after[2] - 2 * after[5]
+                                score += pt
+                                for i in range(frames):
+                                        scores[-1-i] += pt * gamma ** i
 					
 			if lastGame.gameOver: break
-		print(round(score / frames, 2), frames, [round(i/frames, 4) for i in freq])
+		print(round(score / frames, 2), frames, [round(i/frames, 4) for i in freq], lines)
 	# AI magic
 	model.fit([[[games[i][0] + games[i][1]] for i in range(len(games))]], [[[i] for i in scores]], epochs=30, verbose=2)
