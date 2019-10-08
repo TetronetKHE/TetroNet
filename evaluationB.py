@@ -1,5 +1,6 @@
 import game
 import random
+import numpy as np
 
 def train(model, steps, gamma, tryhard=0.1, epochs=50):
 	games = []

@@ -57,7 +57,7 @@ class AI:
 	def saveWeights(self):
 		self.model.save_weights(AI.SaveDirectory + self.saveFileName)
 	
-	def train(self, saves=300, steps=50, gamma=.99, tryhard=.03, epochs=50, evaluation=None):
+	def train(self, saves=300, steps=50, gamma=.99, tryhard=.03, epochs=50, freq=1, evaluation=None):
 		if not evaluation:
 			import evaluation
 		
@@ -65,7 +65,8 @@ class AI:
 			evaluation.train(self.model, steps, gamma, tryhard, epochs)
 			self.saveWeights()
 			print(f"== Saved weights to backup file. {saveStep}/{saves} complete. ==")
-			self.playGames()
+			if saveStep%freq==0:
+                                self.playGames()
 	
 	def playGames(self, forever=False, music=False):
 		gameWindow = game.GameWindow()
