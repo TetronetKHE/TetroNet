@@ -50,4 +50,4 @@ def train(model, steps, gamma, tryhard=0.1, epochs=50):
 			if lastGame.gameOver: break
 		print(round(score / frames, 2), frames, [round(i/frames, 4) for i in freq], lines)
 	# AI magic
-	model.fit([[[games[i][0] + games[i][1]] for i in range(len(games))]], [[[i] for i in scores]], epochs=epochs, sample_weight=np.array([.1 for i in scores]), verbose=2)
+	model.fit([[[games[i][0] + games[i][1]] for i in range(len(games))]], [[[i] for i in scores]], epochs=epochs, verbose=2)
